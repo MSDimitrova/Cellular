@@ -14,5 +14,6 @@
 
 //static original
 #include "variables.hpp"
-#include "utility.hpp"
+#include "basicUtility.hpp"
 #include "gameObjects.hpp"
+#include "advancedUtility.hpp"

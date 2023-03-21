@@ -29,7 +29,10 @@
     <ClInclude Include="..\..\headers\variables.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\headers\utility.hpp">
+    <ClInclude Include="..\..\headers\basicUtility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\headers\advancedUtility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

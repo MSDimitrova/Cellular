@@ -75,16 +75,69 @@ struct Equipment : GameObject
 
     void UpdatePos(GameObject& parent, int rotationIndex)
     {
-        float prepRotation = parent.rotation / 57.29578f;
+        float prepRotation = parent.rotation;
+        if (prepRotation < 0)
+            prepRotation += 360;
         if (slot % 2)
             prepRotation *= -1;
-        Vector2 prepPos = { parent.pos.x + cellMargin[slot].x + directionPos[slot * 2].x * size.x / 2,
-            parent.pos.y + cellMargin[slot].y + directionPos[slot * 2].y * size.x / 2 };
+        Vector2 prepMargin = cellMargin[slot];
+        if(slot % 2)
+        {
+            switch (rotationIndex)
+            {
+            case 0:
+                prepMargin.x = prepMargin.x - prepRotation * prepMargin.x / 90;
+                break;
+            case 2:
+                prepMargin.x = prepRotation * prepMargin.x / 90;
+                break;
+            case 4:
+                prepMargin.x = prepMargin.x - prepRotation * prepMargin.x / 90;
+                break;
+            case 6:
+                prepMargin.x = prepRotation * prepMargin.x / 90;
+                break;
+            }
+        }
+        else
+        {
+            switch (rotationIndex)
+            {
+            case 0:
+                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            case 1:
+                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            case 2:
+                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            case 3:
+                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            case 4:
+                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            case 5:
+                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            case 6:
+                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            case 7:
+                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
+                break;
+            }
+        }
+        prepRotation /= 57.29578f;
+
+        Vector2 prepPos = { parent.pos.x + prepMargin.x + directionPos[slot * 2].x * size.x / 2,
+            parent.pos.y + prepMargin.y + directionPos[slot * 2].y * size.x / 2 };
         
         pos = { ((prepPos.x - parent.pos.x) * cos(prepRotation)) - ((parent.pos.y - prepPos.y) * sin(prepRotation)) + parent.pos.x,
             parent.pos.y - ((parent.pos.y - prepPos.y) * cos(prepRotation)) + ((prepPos.x - parent.pos.x) * sin(prepRotation)) };
 
-        rotation = parent.rotation + directionRotation[slot * 2];
+        rotation = parent.rotation + slot * 90;
     }
 
     void Setup(Prefab& prefab)
@@ -125,3 +178,4 @@ struct Food : GameObject
 };
 
 Prefab* prefabs[] = { &spike, &canon, &bristles, &tail };
+Cell player;

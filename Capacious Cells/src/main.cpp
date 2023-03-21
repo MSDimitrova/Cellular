@@ -1,66 +1,5 @@
 #include "../headers/libraries.hpp"
 
-Cell player;
-
-bool DirectionalSimilarity(Vector2 current, Vector2 past, Vector2 similar)
-{
-    if ((current.x - past.x) / abs(current.x - past.x) == similar.x && (current.y - past.y) / abs(current.y - past.y) == similar.y)
-        return 1;
-    return 0;
-}
-
-void MoveInTwoDirections(int speed, int directionX, int directionY, Vector2& refPos, bool& refCheck = dummyBool)
-{
-    refPos.x += round(sqrt(pow(speed, 2) / 2)) * directionX;
-    refPos.y += round(sqrt(pow(speed, 2) / 2)) * directionY;
-    refCheck = 1;
-}
-
-void Equip(Cell& cell, int _prefab, int _slot)
-{
-    cell.equipment[_slot].Setup(*prefabs[_prefab]);
-    cell.equipment[_slot].slot = _slot;
-}
-
-void DrawGameObject(GameObject& gameObject)
-{
-    if(!pause && gameObject.sprite.size() > 1)
-        gameObject.Animate();
-
-    DrawTexturePro(*gameObject.currentSprite, Rectangle{0, 0, gameObject.size.x, gameObject.size.y},
-        { gameObject.pos.x, gameObject.pos.y, gameObject.size.x, gameObject.size.y },
-        { gameObject.size.x / 2, gameObject.size.y / 2 }, gameObject.rotation, RAYWHITE);
-}
-
-void UpdateScreen(Color bg)
-{
-    BeginDrawing();
-        ClearBackground(bg);
-        DrawFPS(10, 10);
-
-        BeginMode2D(camera);
-            //DrawTexture(background, CENTER.x - background.width / 2, CENTER.y - background.height / 2, RAYWHITE);
-            DrawCircle(CENTER.x, CENTER.y, 5, RED);
-   
-            for (int i = 0; i < 4; i++)
-                if (player.equipment[i].name != "none")
-                {
-                    player.equipment[i].UpdatePos(player, player.rotationIndex);
-                    DrawGameObject(player.equipment[i]);
-                }
-            DrawGameObject(player);
-
-        EndMode2D();
-    EndDrawing();
-
-    if (!pause)
-    {
-        //player rotation
-        player.rotation = atan2(GetScreenToWorld2D(GetMousePosition(), camera).y - player.pos.y,
-            GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * 57.29578f;
-    }
-}
-
 int main()
 {
     //setup window
@@ -111,8 +50,8 @@ int main()
     camera = { CENTER, player.pos, 0, 1.0f };
 
     //debug
-    for (int i = 0; i < 4; i++)
-        Equip(player, 3, i);
+    //for (int i = 0; i < 4; i++)
+        Equip(player, 0, 0);
 
     //start game runtime
     while (!WindowShouldClose())
@@ -150,9 +89,9 @@ int main()
                         break;
 
                 //map player's rotating direction
-                player.rotationIndex = round(player.rotation / 45);
-                if (player.rotationIndex == 8)
-                    player.rotationIndex = 7;
+                player.rotationIndex = floor(player.rotation / 45);
+                if (player.rotationIndex < 0)
+                    player.rotationIndex += 8;
 
                 //variable sets and resets
                 doubleMovementKeys = 0;
@@ -171,9 +110,9 @@ int main()
                 if (IsKeyPressed(KEY_ONE))
                     player.UpdateSprite(&playerSprite[0]);
                 else if (IsKeyPressed(KEY_TWO))
-                    player.UpdateSprite(&playerSprite[1]);
-                else if (IsKeyPressed(KEY_THREE))
                     player.UpdateSprite(&playerSprite[2]);
+                else if (IsKeyPressed(KEY_THREE))
+                    std::cout << player.rotation << ", " << directionRotation[player.rotationIndex] << ", " << player.rotationIndex << std::endl;
             }
             break;
 
