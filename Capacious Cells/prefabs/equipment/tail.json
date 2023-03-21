@@ -1,0 +1,7 @@
+{
+    "animationFPS": 6,
+	"boostType": true,
+    "cost": 3,
+    "boost": 20,
+    "name": "tail"
+}
