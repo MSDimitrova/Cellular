@@ -30,9 +30,9 @@ int main()
     if (windowSize.x == 1920 && windowSize.y == 1080)
         resolution = 1;
     cellMargin[0] = { Pixels(13), Pixels(-.5) };
-    cellMargin[1] = { Pixels(-1.5), Pixels(9) };
+    cellMargin[1] = { Pixels(-1.5), Pixels(9.1) };
     cellMargin[2] = { Pixels(-13), Pixels(-.5) };
-    cellMargin[3] = { Pixels(-1.5), Pixels(-9) };
+    cellMargin[3] = { Pixels(-1.5), Pixels(-9.1) };
 
     //load textures
     missingTexture = LoadTexture("../../assets/MissingTexture.png");
@@ -50,8 +50,8 @@ int main()
     camera = { CENTER, player.pos, 0, 1.0f };
 
     //debug
-    //for (int i = 0; i < 4; i++)
-        Equip(player, 0, 0);
+    for (int i = 0; i < 4; i++)
+        Equip(player, 0, i);
 
     //start game runtime
     while (!WindowShouldClose())
@@ -112,7 +112,7 @@ int main()
                 else if (IsKeyPressed(KEY_TWO))
                     player.UpdateSprite(&playerSprite[2]);
                 else if (IsKeyPressed(KEY_THREE))
-                    std::cout << player.rotation << ", " << directionRotation[player.rotationIndex] << ", " << player.rotationIndex << std::endl;
+                    std::cout << GetMouseX() << ", " << GetMouseY() << std::endl;
             }
             break;
 

@@ -76,58 +76,22 @@ struct Equipment : GameObject
     void UpdatePos(GameObject& parent, int rotationIndex)
     {
         float prepRotation = parent.rotation;
+        //Vector2 prepMargin = { sqrt(pow(cellMargin[slot].x, 2) + pow(cellMargin[slot].y, 2)) , sqrt(pow(cellMargin[slot].x, 2) + pow(cellMargin[slot].y, 2))};
+        Vector2 prepMargin = cellMargin[slot];
+
         if (prepRotation < 0)
             prepRotation += 360;
+
         if (slot % 2)
-            prepRotation *= -1;
-        Vector2 prepMargin = cellMargin[slot];
-        if(slot % 2)
         {
-            switch (rotationIndex)
-            {
-            case 0:
-                prepMargin.x = prepMargin.x - prepRotation * prepMargin.x / 90;
-                break;
-            case 2:
-                prepMargin.x = prepRotation * prepMargin.x / 90;
-                break;
-            case 4:
-                prepMargin.x = prepMargin.x - prepRotation * prepMargin.x / 90;
-                break;
-            case 6:
-                prepMargin.x = prepRotation * prepMargin.x / 90;
-                break;
-            }
+            prepRotation *= -1;
+            prepRotation -= round(atan2(prepMargin.y, prepMargin.x)) * 3.6;
+            prepMargin.x = 0;
         }
         else
         {
-            switch (rotationIndex)
-            {
-            case 0:
-                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            case 1:
-                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            case 2:
-                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            case 3:
-                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            case 4:
-                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            case 5:
-                prepMargin.y -= (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            case 6:
-                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            case 7:
-                prepMargin.y += (prepRotation - rotationIndex * 45) * prepMargin.y / 45;
-                break;
-            }
+            prepRotation -= round(atan2(prepMargin.x, prepMargin.y));
+            prepMargin.y = 0;
         }
         prepRotation /= 57.29578f;
 
