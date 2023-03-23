@@ -49,5 +49,8 @@
     <None Include="..\..\prefabs\equipment\tail.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\prefabs\cells\enemy0.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

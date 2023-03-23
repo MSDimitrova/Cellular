@@ -5,12 +5,6 @@ using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 //transformative
-void MoveInTwoDirections(int speed, int directionX, int directionY, Vector2& refPos, bool& refCheck = dummyBool)
-{
-    refPos.x += round(sqrt(pow(speed, 2) / 2)) * directionX;
-    refPos.y += round(sqrt(pow(speed, 2) / 2)) * directionY;
-    refCheck = 1;
-}
 bool DirectionalSimilarity(Vector2 current, Vector2 past, Vector2 similar)
 {
     if ((current.x - past.x) / abs(current.x - past.x) == similar.x && (current.y - past.y) / abs(current.y - past.y) == similar.y)

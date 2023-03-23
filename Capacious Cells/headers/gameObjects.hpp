@@ -62,6 +62,18 @@ struct GameObject
         size.y = sprite[_i]->height;
         currentSprite = sprite[_i];
     }
+
+    void UpdateAnimation(Prefab& prefab)
+    {
+        //reduce size of this's sprite array to size of prefab sprite array to be assigned
+        if (sprite.size() > prefab.sprite.size())
+            for (int i = sprite.size(); i > prefab.sprite.size(); i--)
+                sprite.pop_back();
+
+        //assign prefab sprite array to this's sprite array
+        for (int i = 0; i < prefab.sprite.size(); i++)
+            UpdateSprite(&prefab.sprite[i], i);
+    }
 };
 
 struct Equipment : GameObject
@@ -115,25 +127,35 @@ struct Equipment : GameObject
         boost = prefab.data["boost"];
         name = prefab.data["name"];
 
-        //reduce size of this's sprite array to size of prefab sprite array to be assigned
-        if (sprite.size() > prefab.sprite.size())
-            for (int i = sprite.size(); i > prefab.sprite.size(); i--)
-                sprite.pop_back();
-
-        //assign prefab sprite array to this's sprite array
-        for (int i = 0; i < prefab.sprite.size(); i++)
-            UpdateSprite(&prefab.sprite[i], i);
+        UpdateAnimation(prefab);
     }
 };
 
 struct Cell : GameObject
 {
+    int id = -1;
     int maxHp = 150;
     int hp = maxHp;
-    int speed = 5;
+    int speed = 0;
     int movementIndex;
     int rotationIndex;
     Equipment equipment[4];
+
+    void Setup(Prefab& prefab, int _id = -1)
+    {
+        if (_id != -1)
+            id = _id;
+        pos.x = CENTER.x + enemyPos[id].x;
+        pos.y = CENTER.y + enemyPos[id].y;
+
+        //assign prefab values to this's values
+        speed = prefab.data["speed"];
+        id = prefab.data["id"];
+        maxHp = prefab.data["maxHp"];
+        hp = maxHp;
+
+        UpdateAnimation(prefab);
+    }
 };
 
 struct Food : GameObject
@@ -141,5 +163,10 @@ struct Food : GameObject
     int type = 0; //dmg, speed, evo points or recipe
 };
 
-Prefab* prefabs[] = { &spike, &canon, &bristles, &tail };
+Prefab* prefabPart[] = { &spike, &canon, &bristles, &tail }; //0 - spike, 1 - canon, 2 - bristles, 3 - tail
+
+Prefab prefabEnemy[prefabEnemies];
+Cell enemy[enemies];
+std::vector<Cell*> enemyOnScreen;
+
 Cell player;

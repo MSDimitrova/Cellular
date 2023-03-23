@@ -14,13 +14,18 @@ const char* assetsFolder = "../../assets/";
 const char* prefabsFolder = "../../prefabs/";
 
 //constants
+const int enemies = 4, prefabEnemies = 1;
 const float directionRotation[8] = { 0, 45, 90, 135, 180, 225, 270, 315 };
 const Vector2 directionPos[8] = { {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
+
+//constant after first assignment
+bool resolution = 0;
+Vector2 CENTER, windowSize, cellMargin[4], enemyPos[enemies];
 
 //objects
 Texture2D missingTexture;
 Camera2D camera;
 
 //misc.
-bool pause,resolution = 0;
-Vector2 CENTER, windowSize, cellMargin[4];
+bool pause;
+Vector2 screenCheck[4];

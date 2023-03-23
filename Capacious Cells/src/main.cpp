@@ -26,7 +26,7 @@ int main()
     bool doubleMovementKeys = 0;
     int playerEP = 3, targetEquipment = -1, targetSlot = -1;
     Vector2 wasMousePos;
-    int gameScreen = 2; //0 = game screen, 1 = evolve screen, 2 = main menu, 3 = pause screen
+    int screen = 2; //0 = game screen, 1 = evolve screen, 2 = main menu, 3 = pause screen
     if (windowSize.x == 1920 && windowSize.y == 1080)
         resolution = 1;
     cellMargin[0] = { Pixels(13), Pixels(-.5) };
@@ -41,37 +41,60 @@ int main()
     //background = LoadTexture("../../assets/Background.png");
     
     //setup objects
-    std::vector<const char*> prefabName{ "equipment/spike" , "equipment/canon", "equipment/bristles", "equipment/tail" };
-    for (int i = 0; i < prefabName.size(); i++)
-        prefabs[i]->Setup(prefabName[i]);
+    std::vector<const char*> prefabPartName{ "equipment/spike" , "equipment/canon", "equipment/bristles", "equipment/tail" };
+    for (int i = 0; i < prefabPartName.size(); i++)
+        prefabPart[i]->Setup(prefabPartName[i]);
+
+    std::vector<const char*> prefabEnemyName{ "cells/enemy0"/* , "cells/enemy1", "cells/enemy2", "cells/enemy3"*/};
+    for (int i = 0; i < prefabEnemies; i++)
+        prefabEnemy[i].Setup(prefabEnemyName[i]);
+    SetupEnemyPos();
+    for (int i = 0; i < enemies; i++)
+        enemy[i].Setup(prefabEnemy[0], i);
 
     player.UpdateSprite(&playerSprite[0]);
     player.pos = CENTER;
+    player.speed = Pixels(1);
+
     camera = { CENTER, player.pos, 0, 1.0f };
 
     //debug
+    for (int i = 0; i < 4; i++)
+        Equip(enemy[0], 0, i);
+
     for (int i = 0; i < 4; i++)
         Equip(player, 0, i);
 
     //start game runtime
     while (!WindowShouldClose())
     {
-        pause = floor(gameScreen / 2);
-        switch (gameScreen)
+        pause = screen;
+        switch (screen)
         {
             case 0: //game screen
             {
                 UpdateScreen(BLACK);
 
+                //choosing what to render
+                screenCheck[0] = GetScreenToWorld2D({ windowSize.x + Pixels(20), windowSize.y + Pixels(20) }, camera);
+                screenCheck[1] = GetScreenToWorld2D({ Pixels(-20), windowSize.y + Pixels(20) }, camera);
+                screenCheck[2] = GetScreenToWorld2D({ Pixels(-20), Pixels(-20) }, camera);
+                screenCheck[3] = GetScreenToWorld2D({ windowSize.x + Pixels(20), Pixels(-20) }, camera);
+
+                enemyOnScreen.clear();
+                for (int i = 0; i < enemies; i++)
+                    if (IsOnScreen(enemy[i].pos))
+                        enemyOnScreen.push_back(&enemy[i]);
+
                 //movement
                 if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player.speed, -1, -1, player.pos, doubleMovementKeys);
+                    MoveInTwoDirections(player, -1, -1, doubleMovementKeys);
                 if (IsKeyDown(KEY_W) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player.speed, 1, -1, player.pos, doubleMovementKeys);
+                    MoveInTwoDirections(player, 1, -1, doubleMovementKeys);
                 if (IsKeyDown(KEY_S) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player.speed, -1, 1, player.pos, doubleMovementKeys);
+                    MoveInTwoDirections(player, -1, 1, doubleMovementKeys);
                 if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player.speed, 1, 1, player.pos, doubleMovementKeys);
+                    MoveInTwoDirections(player, 1, 1, doubleMovementKeys);
                 if (!doubleMovementKeys)
                 {
                     if (IsKeyDown(KEY_W))
@@ -99,11 +122,11 @@ int main()
 
                 //game screen listens
                 if (IsKeyPressed(KEY_E))
-                    gameScreen = 1;
+                    screen = 1;
                 else if (IsKeyPressed(KEY_ESCAPE))
                 {
                     wasMousePos = GetMousePosition();
-                    gameScreen = 3;
+                    screen = 3;
                 }
 
                 //debug
@@ -112,7 +135,7 @@ int main()
                 else if (IsKeyPressed(KEY_TWO))
                     player.UpdateSprite(&playerSprite[2]);
                 else if (IsKeyPressed(KEY_THREE))
-                    std::cout << GetMouseX() << ", " << GetMouseY() << std::endl;
+                    std::cout << enemyOnScreen.size() << std::endl;
             }
             break;
 
@@ -153,10 +176,13 @@ int main()
                 if (IsKeyPressed(KEY_ESCAPE))
                 {
                     wasMousePos = GetMousePosition();
-                    gameScreen = 3;
+                    screen = 3;
                 }
                 else if (IsKeyPressed(KEY_E))
-                    gameScreen = 0;
+                {
+                    SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
+                    screen = 0;
+                }
             }
             break;
 
@@ -170,7 +196,7 @@ int main()
                 if (IsKeyPressed(KEY_ENTER))
                 {
                     SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
-                    gameScreen = 0;
+                    screen = 0;
                 }
             }
             break;
@@ -185,7 +211,7 @@ int main()
                 if (IsKeyPressed(KEY_ESCAPE))
                 {
                     SetMousePosition(wasMousePos.x, wasMousePos.y);
-                    gameScreen = 0;
+                    screen = 0;
                 }
             }
             break;
