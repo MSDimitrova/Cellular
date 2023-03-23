@@ -4,6 +4,7 @@
 //dummies
 bool dummyBool;
 const char* dummyConstCharPtr;
+Vector2 dummyVector2;
 Texture2D dummyTexture;
 
 //path parts
@@ -28,4 +29,4 @@ Camera2D camera;
 
 //misc.
 bool pause;
-Vector2 screenCheck[4];
+Vector2 screenCheck[4], point[10];

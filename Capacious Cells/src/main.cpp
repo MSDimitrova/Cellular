@@ -86,6 +86,11 @@ int main()
                     if (IsOnScreen(enemy[i].pos))
                         enemyOnScreen.push_back(&enemy[i]);
 
+                for (int i = 0; i < enemyOnScreen.size(); i++)
+                    for (int j = 0; j < enemyOnScreen.size(); j++)
+                        if (SpikeCollision(*enemyOnScreen[i], player.equipment[j]))
+                            enemyOnScreen[i]->UpdateSprite(&missingTexture);
+
                 //movement
                 if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
                     MoveInTwoDirections(player, -1, -1, doubleMovementKeys);

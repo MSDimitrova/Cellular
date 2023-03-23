@@ -4,18 +4,26 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-//transformative
+//screen related
+float Pixels(float pixels)
+{
+    return round(pixels * (3 + 3 * resolution));
+}
+
+//transformative (math)
 bool DirectionalSimilarity(Vector2 current, Vector2 past, Vector2 similar)
 {
     if ((current.x - past.x) / abs(current.x - past.x) == similar.x && (current.y - past.y) / abs(current.y - past.y) == similar.y)
         return 1;
     return 0;
 }
-
-//screen related
-float Pixels(float pixels)
+float HypotenuseLength(float a, float b)
 {
-    return pixels * (3 + 3 * resolution);
+    return sqrt(pow(a, 2) + pow(b, 2));
+}
+Vector2 HypotenuseCoordinates(Vector2 point, float hypotenuse, float angle)
+{
+    return { point.x + cos(angle) * hypotenuse, point.y + sin(angle) * hypotenuse };
 }
 
 //misc.
