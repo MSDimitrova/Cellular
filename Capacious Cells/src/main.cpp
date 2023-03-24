@@ -87,34 +87,33 @@ int main()
                         enemyOnScreen.push_back(&enemy[i]);
 
                 for (int i = 0; i < enemyOnScreen.size(); i++)
-                    for (int j = 0; j < enemyOnScreen.size(); j++)
-                        if (SpikeCollision(*enemyOnScreen[i], player.equipment[j]))
-                            enemyOnScreen[i]->UpdateSprite(&missingTexture);
+                    for (int j = 0; j < 4; j++)
+                    {
+                        if (player.equipment[j].name == "spike")
+                            if (SpikeCollision(*enemyOnScreen[i], player.equipment[j]))
+                                enemyOnScreen[i]->UpdateSprite(&missingTexture);
+                        if (enemyOnScreen[i]->equipment[j].name == "spike")
+                            if (SpikeCollision(player, enemyOnScreen[i]->equipment[j]))
+                                player.UpdateSprite(&missingTexture);
+                    }
 
                 //movement
-                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player, -1, -1, doubleMovementKeys);
-                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player, 1, -1, doubleMovementKeys);
-                if (IsKeyDown(KEY_S) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player, -1, 1, doubleMovementKeys);
                 if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player, 1, 1, doubleMovementKeys);
+                    MoveInTwoDirections(player, { 1, 1 }, 1, doubleMovementKeys);
+                if (IsKeyDown(KEY_S) && IsKeyDown(KEY_A))
+                    MoveInTwoDirections(player, { -1, 1 }, 3, doubleMovementKeys);
+                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
+                    MoveInTwoDirections(player, { -1, -1 }, 5, doubleMovementKeys);
+                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_D))
+                    MoveInTwoDirections(player, { 1, -1 }, 7, doubleMovementKeys);
+
                 if (!doubleMovementKeys)
                 {
-                    if (IsKeyDown(KEY_W))
-                        player.pos.y -= player.speed;
-                    if (IsKeyDown(KEY_S))
-                        player.pos.y += player.speed;
-                    if (IsKeyDown(KEY_A))
-                        player.pos.x -= player.speed;
-                    if (IsKeyDown(KEY_D))
-                        player.pos.x += player.speed;
+                    MoveInOneDirection(KEY_D, KEY_A, 0);
+                    MoveInOneDirection(KEY_S, KEY_W, 2);
+                    MoveInOneDirection(KEY_A, KEY_D, 4);
+                    MoveInOneDirection(KEY_W, KEY_S, 6);
                 }
-                //map player's moving direction
-                for (player.movementIndex = 0; player.movementIndex < 8; player.movementIndex++)
-                    if (DirectionalSimilarity(player.pos, camera.target, directionPos[player.movementIndex]))
-                        break;
 
                 //map player's rotating direction
                 player.rotationIndex = floor(player.rotation / 45);
@@ -140,7 +139,7 @@ int main()
                 else if (IsKeyPressed(KEY_TWO))
                     player.UpdateSprite(&playerSprite[2]);
                 else if (IsKeyPressed(KEY_THREE))
-                    std::cout << enemyOnScreen.size() << std::endl;
+                    std::cout << player.movementIndex << std::endl;
             }
             break;
 

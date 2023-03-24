@@ -137,8 +137,8 @@ struct Cell : GameObject
     int maxHp = 150;
     int hp = maxHp;
     int speed = 0;
-    int movementIndex;
-    int rotationIndex;
+    int movementIndex = -1;
+    int rotationIndex = -1;
     Equipment equipment[4];
 
     void Setup(Prefab& prefab, int _id = -1)

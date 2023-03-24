@@ -11,12 +11,6 @@ float Pixels(float pixels)
 }
 
 //transformative (math)
-bool DirectionalSimilarity(Vector2 current, Vector2 past, Vector2 similar)
-{
-    if ((current.x - past.x) / abs(current.x - past.x) == similar.x && (current.y - past.y) / abs(current.y - past.y) == similar.y)
-        return 1;
-    return 0;
-}
 float HypotenuseLength(float a, float b)
 {
     return sqrt(pow(a, 2) + pow(b, 2));
