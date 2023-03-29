@@ -93,7 +93,7 @@ struct Equipment : GameObject
         if (slot % 2)
         {
             tempRotation *= -1;
-            tempRotation -= round(atan2(tempV2.y, tempV2.x)) * 3.6;
+            tempRotation -= round(atan2(tempV2.y, tempV2.x));
             tempV2.x = 0;
         }
         else

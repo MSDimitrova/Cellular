@@ -97,12 +97,7 @@ int main()
                             SpikeCollision(player, *enemyOnScreen[i], j);
                     }
                     enemyOnScreen[i]->CheckKnockback();
-                    if(enemyOnScreen[i]->knockbackFrames > 0)
-                    {
-                        tempPos = GetWorldToScreen2D(enemyOnScreen[i]->pos, camera);
-                        tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), enemyOnScreen[i]->knockbackAngle);
-                        DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, PURPLE);
-                    }
+
                 }
 
                 player.CheckKnockback();
