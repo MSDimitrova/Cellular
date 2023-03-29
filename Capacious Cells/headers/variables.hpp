@@ -17,6 +17,7 @@ const char* prefabsFolder = "../../prefabs/";
 //constants
 const int enemies = 4, prefabEnemies = 1;
 const float directionRotation[8] = { 0, 45, 90, 135, 180, 225, 270, 315 };
+const float toDegrees = 57.29578f;
 const Vector2 directionPos[8] = { {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
 
 //constant after first assignment
@@ -27,6 +28,10 @@ Vector2 CENTER, windowSize, cellMargin[4], enemyPos[enemies];
 Texture2D missingTexture;
 Camera2D camera;
 
+//temporaries
+float tempRotation;
+Vector2 tempPos, tempV2;
+
 //misc.
 bool pause;
-Vector2 screenCheck[4], point[10];
+Vector2 screenCheck[4], cellPoint[6], spikePoint[3];

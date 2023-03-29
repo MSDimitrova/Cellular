@@ -60,10 +60,11 @@ int main()
 
     //debug
     for (int i = 0; i < 4; i++)
-        Equip(enemy[0], 0, i);
-
-    for (int i = 0; i < 4; i++)
         Equip(player, 0, i);
+
+    for (int i = 0; i < enemies; i++)
+        for (int j = 0; j < 4; j++)
+            Equip(enemy[i], 3, j);
 
     //start game runtime
     while (!WindowShouldClose())
@@ -87,15 +88,24 @@ int main()
                         enemyOnScreen.push_back(&enemy[i]);
 
                 for (int i = 0; i < enemyOnScreen.size(); i++)
+                {
                     for (int j = 0; j < 4; j++)
                     {
                         if (player.equipment[j].name == "spike")
-                            if (SpikeCollision(*enemyOnScreen[i], player.equipment[j]))
-                                enemyOnScreen[i]->UpdateSprite(&missingTexture);
+                            SpikeCollision(*enemyOnScreen[i], player, j);
                         if (enemyOnScreen[i]->equipment[j].name == "spike")
-                            if (SpikeCollision(player, enemyOnScreen[i]->equipment[j]))
-                                player.UpdateSprite(&missingTexture);
+                            SpikeCollision(player, *enemyOnScreen[i], j);
                     }
+                    enemyOnScreen[i]->CheckKnockback();
+                    if(enemyOnScreen[i]->knockbackFrames > 0)
+                    {
+                        tempPos = GetWorldToScreen2D(enemyOnScreen[i]->pos, camera);
+                        tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), enemyOnScreen[i]->knockbackAngle);
+                        DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, PURPLE);
+                    }
+                }
+
+                player.CheckKnockback();
 
                 //movement
                 if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
@@ -140,6 +150,22 @@ int main()
                     player.UpdateSprite(&playerSprite[2]);
                 else if (IsKeyPressed(KEY_THREE))
                     std::cout << player.movementIndex << std::endl;
+
+                tempPos = GetWorldToScreen2D(player.pos, camera);
+                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), player.rotation / toDegrees);
+                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, YELLOW);
+
+                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[0].slot * 2]) / toDegrees);
+                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, GREEN);
+
+                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[1].slot * 2]) / toDegrees);
+                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, GRAY);
+
+                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[2].slot * 2]) / toDegrees);
+                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, WHITE);
+
+                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[3].slot * 2]) / toDegrees);
+                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, DARKBLUE);
             }
             break;
 

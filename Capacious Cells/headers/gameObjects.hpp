@@ -87,31 +87,27 @@ struct Equipment : GameObject
 
     void UpdatePos(GameObject& parent, int rotationIndex)
     {
-        float prepRotation = parent.rotation;
-        //Vector2 prepMargin = { sqrt(pow(cellMargin[slot].x, 2) + pow(cellMargin[slot].y, 2)) , sqrt(pow(cellMargin[slot].x, 2) + pow(cellMargin[slot].y, 2))};
-        Vector2 prepMargin = cellMargin[slot];
-
-        if (prepRotation < 0)
-            prepRotation += 360;
+        tempRotation = parent.rotation;
+        tempV2 = cellMargin[slot];
 
         if (slot % 2)
         {
-            prepRotation *= -1;
-            prepRotation -= round(atan2(prepMargin.y, prepMargin.x)) * 3.6;
-            prepMargin.x = 0;
+            tempRotation *= -1;
+            tempRotation -= round(atan2(tempV2.y, tempV2.x)) * 3.6;
+            tempV2.x = 0;
         }
         else
         {
-            prepRotation -= round(atan2(prepMargin.x, prepMargin.y));
-            prepMargin.y = 0;
+            tempRotation -= round(atan2(tempV2.x, tempV2.y));
+            tempV2.y = 0;
         }
-        prepRotation /= 57.29578f;
+        tempRotation /= toDegrees;
 
-        Vector2 prepPos = { parent.pos.x + prepMargin.x + directionPos[slot * 2].x * size.x / 2,
-            parent.pos.y + prepMargin.y + directionPos[slot * 2].y * size.x / 2 };
+        tempPos = { parent.pos.x + tempV2.x + directionPos[slot * 2].x * size.x / 2,
+            parent.pos.y + tempV2.y + directionPos[slot * 2].y * size.x / 2 };
         
-        pos = { ((prepPos.x - parent.pos.x) * cos(prepRotation)) - ((parent.pos.y - prepPos.y) * sin(prepRotation)) + parent.pos.x,
-            parent.pos.y - ((parent.pos.y - prepPos.y) * cos(prepRotation)) + ((prepPos.x - parent.pos.x) * sin(prepRotation)) };
+        pos = { ((tempPos.x - parent.pos.x) * cos(tempRotation)) - ((parent.pos.y - tempPos.y) * sin(tempRotation)) + parent.pos.x,
+            parent.pos.y - ((parent.pos.y - tempPos.y) * cos(tempRotation)) + ((tempPos.x - parent.pos.x) * sin(tempRotation)) };
 
         rotation = parent.rotation + slot * 90;
     }
@@ -139,6 +135,8 @@ struct Cell : GameObject
     int speed = 0;
     int movementIndex = -1;
     int rotationIndex = -1;
+    int knockbackFrames = 0;
+    float knockbackAngle = 0;
     Equipment equipment[4];
 
     void Setup(Prefab& prefab, int _id = -1)
@@ -155,6 +153,26 @@ struct Cell : GameObject
         hp = maxHp;
 
         UpdateAnimation(prefab);
+    }
+
+    void SetKnockback(int _knockbackFrames, int _knockbackAngle)
+    {
+        knockbackFrames = _knockbackFrames;
+        knockbackAngle = _knockbackAngle;
+        speed = Pixels(6);
+    }
+
+    void CheckKnockback()
+    {
+        if (knockbackFrames > 0)
+        {
+            pos = HypotenuseCoordinates(pos, speed, knockbackAngle);
+            knockbackFrames--;
+            if (knockbackFrames == 0)
+                speed = Pixels(1);
+            else if(ceil(Pixels(speed, 1)) != ceil(knockbackFrames / 8))
+                speed--;
+        }
     }
 };
 

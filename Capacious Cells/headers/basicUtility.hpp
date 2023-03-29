@@ -5,19 +5,39 @@ using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 //screen related
-float Pixels(float pixels)
+float Pixels(float pixels, bool opposite = false)
 {
+    if(opposite)
+        return round(pixels / (3 + 3 * resolution));
     return round(pixels * (3 + 3 * resolution));
 }
 
 //transformative (math)
+int AddIndex(int a, int b, int minus = 1)
+{
+    a += b * minus;
+    if (a > 7)
+        a -= 8;
+    else if (a < 0)
+        a += 8;
+    return a;
+}
+float AddRotation(float a, float b, int minus = 1)
+{
+    a += b * minus;
+    if (a > 359)
+        a -= 360;
+    else if (a < 0)
+        a += 360;
+    return a;
+}
 float HypotenuseLength(float a, float b)
 {
     return sqrt(pow(a, 2) + pow(b, 2));
 }
-Vector2 HypotenuseCoordinates(Vector2 point, float hypotenuse, float angle)
+Vector2 HypotenuseCoordinates(Vector2 point, float hypotenuseLength, float angle)
 {
-    return { point.x + cos(angle) * hypotenuse, point.y + sin(angle) * hypotenuse };
+    return { point.x + cos(angle) * hypotenuseLength, point.y + sin(angle) * hypotenuseLength };
 }
 
 //misc.

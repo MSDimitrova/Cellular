@@ -34,46 +34,51 @@ void SetupEnemyPos()
 }
 
 //collisions
-bool CellLineCollision(GameObject& cell, Vector2 point1, Vector2 point2)
+void CellLines(GameObject& cell)
 {
     Vector2 pos = GetWorldToScreen2D(cell.pos, camera);
+    cellPoint[0] = HypotenuseCoordinates(pos, cell.size.x / 2, cell.rotation / toDegrees);
+    cellPoint[1] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation + 55) / toDegrees);
+    cellPoint[2] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation + 135) / toDegrees);
+    cellPoint[3] = HypotenuseCoordinates(pos, cell.size.x / 2, (cell.rotation + 180) / toDegrees);
+    cellPoint[4] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation - 135) / toDegrees);
+    cellPoint[5] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation - 55) / toDegrees);
+}
+void SpikeLines(Equipment& spike)
+{
+    Vector2 pos = GetWorldToScreen2D(spike.pos, camera);
+    spikePoint[0] = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation - 90) / toDegrees);
+    spikePoint[1] = HypotenuseCoordinates(pos, spike.size.x, spike.rotation / toDegrees);
+    spikePoint[2] = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation + 90) / toDegrees);
+    DrawLine(spikePoint[0].x, spikePoint[0].y, spikePoint[1].x, spikePoint[1].y, RED);
+    DrawLine(spikePoint[1].x, spikePoint[1].y, spikePoint[2].x, spikePoint[2].y, RED);
+}
 
-    //setup cell's lines' points
-    point[0] = HypotenuseCoordinates(pos, cell.size.x / 2, cell.rotation / 57.29578f);
-    point[1] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation + 55) / 57.29578f);
-    point[2] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation + 135) / 57.29578f);
-    point[3] = HypotenuseCoordinates(pos, cell.size.x / 2, (cell.rotation + 180) / 57.29578f);
-    point[4] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation - 135) / 57.29578f);
-    point[5] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation - 55) / 57.29578f);
+bool LineCellCollision(GameObject& cell, Vector2 point1, Vector2 point2)
+{
+    CellLines(cell);
 
     //cycle collision checks between cell's lines and given line
     for (int i = 0; i < 5; i++)
     {
-        DrawLine(point[i].x, point[i].y, point[i + 1].x, point[i + 1].y, BLUE);
-        if (CheckCollisionLines(point1, point2, point[i], point[i + 1], &dummyVector2))
+        DrawLine(cellPoint[i].x, cellPoint[i].y, cellPoint[i + 1].x, cellPoint[i + 1].y, BLUE);
+        if (CheckCollisionLines(point1, point2, cellPoint[i], cellPoint[i + 1], &dummyVector2))
             return 1;
     }
-    DrawLine(point[5].x, point[5].y, point[0].x, point[0].y, BLUE);
+    DrawLine(cellPoint[5].x, cellPoint[5].y, cellPoint[0].x, cellPoint[0].y, BLUE);
 
-    if (CheckCollisionLines(point1, point2, point[5], point[0], &dummyVector2))
+    if (CheckCollisionLines(point1, point2, cellPoint[5], cellPoint[0], &dummyVector2))
         return 1;
     return 0;
 }
-bool SpikeCollision(GameObject& cell, Equipment& spike)
+bool SpikeCollision(Cell& attacked, Cell& attacker, int spikeSlot)
 {
-    Vector2 pos = GetWorldToScreen2D(spike.pos, camera);
-
-    //setup spike's lines' points
-    Vector2 point1 = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation - 90) / 57.29578f);
-    Vector2 point2 = HypotenuseCoordinates(pos, spike.size.x, spike.rotation / 57.29578f);
-    Vector2 point3 = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation + 90) / 57.29578f);
-    DrawLine(point1.x, point1.y, point2.x, point2.y, RED);
-    DrawLine(point2.x, point2.y, point3.x, point3.y, RED);
+    SpikeLines(attacker.equipment[spikeSlot]);
 
     //check collision for both of the spike's lines
-    if (CellLineCollision(cell, point1, point2))
-        return 1;
-    else if (CellLineCollision(cell, point2, point3))
+    if (LineCellCollision(attacked, spikePoint[0], spikePoint[1]) || LineCellCollision(attacked, spikePoint[1], spikePoint[2]))
+        if (attacked.knockbackFrames < 1)
+            attacked.SetKnockback(24, AddRotation(attacker.rotation, directionRotation[spikeSlot * 2]) / toDegrees);
         return 1;
     return 0;
 }
@@ -125,6 +130,8 @@ void UpdateScreen(Color bg)
     {
         //player rotation
         player.rotation = atan2(GetScreenToWorld2D(GetMousePosition(), camera).y - player.pos.y,
-            GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * 57.29578f;
+            GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * toDegrees;
+        if (player.rotation < 0)
+            player.rotation += 360;
     }
 }
