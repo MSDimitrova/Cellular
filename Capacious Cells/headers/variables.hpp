@@ -22,16 +22,20 @@ const Vector2 directionPos[8] = { {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, 
 
 //constant after first assignment
 bool resolution = 0;
-Vector2 CENTER, windowSize, cellMargin[4], enemyPos[enemies];
+Vector2 CENTER, windowSize, cellMargin[4], enemyPos[enemies], margin;
 
 //objects
 Texture2D missingTexture;
 Camera2D camera;
 
 //temporaries
+int tempInt;
 float tempRotation;
 Vector2 tempPos, tempV2;
 
 //misc.
-bool pause;
-Vector2 screenCheck[4], cellPoint[6], spikePoint[3];
+bool pause, movementControls = 1;
+int inGameFrames = 0;
+std::vector<int> toErase;
+Vector2 screenCheck[4];
+Vector2 cellPoint[6], spikePoint[3], ballPoint[4]; //collider points

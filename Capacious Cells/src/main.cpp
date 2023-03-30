@@ -30,9 +30,9 @@ int main()
     if (windowSize.x == 1920 && windowSize.y == 1080)
         resolution = 1;
     cellMargin[0] = { Pixels(13), Pixels(-.5) };
-    cellMargin[1] = { Pixels(-1.5), Pixels(9.1) };
+    cellMargin[1] = { Pixels(-1.5), Pixels(9) };
     cellMargin[2] = { Pixels(-13), Pixels(-.5) };
-    cellMargin[3] = { Pixels(-1.5), Pixels(-9.1) };
+    cellMargin[3] = { Pixels(-1.5), Pixels(-9) };
 
     //load textures
     missingTexture = LoadTexture("../../assets/MissingTexture.png");
@@ -41,10 +41,12 @@ int main()
     //background = LoadTexture("../../assets/Background.png");
     
     //setup objects
+        //setup prefab parts
     std::vector<const char*> prefabPartName{ "equipment/spike" , "equipment/canon", "equipment/bristles", "equipment/tail" };
     for (int i = 0; i < prefabPartName.size(); i++)
         prefabPart[i]->Setup(prefabPartName[i]);
-
+        
+        //setup enemies
     std::vector<const char*> prefabEnemyName{ "cells/enemy0"/* , "cells/enemy1", "cells/enemy2", "cells/enemy3"*/};
     for (int i = 0; i < prefabEnemies; i++)
         prefabEnemy[i].Setup(prefabEnemyName[i]);
@@ -52,19 +54,22 @@ int main()
     for (int i = 0; i < enemies; i++)
         enemy[i].Setup(prefabEnemy[0], i);
 
+        //setup player
     player.UpdateSprite(&playerSprite[0]);
     player.pos = CENTER;
     player.speed = Pixels(1);
 
+        //setup misc.
     camera = { CENTER, player.pos, 0, 1.0f };
+    canonBallPrefab.Setup("canonBall");
 
     //debug
     for (int i = 0; i < 4; i++)
-        Equip(player, 0, i);
+        Equip(player, 1, i);
 
     for (int i = 0; i < enemies; i++)
         for (int j = 0; j < 4; j++)
-            Equip(enemy[i], 3, j);
+            Equip(enemy[i], 1, j);
 
     //start game runtime
     while (!WindowShouldClose())
@@ -77,16 +82,48 @@ int main()
                 UpdateScreen(BLACK);
 
                 //choosing what to render
+                    //setup screen checks
                 screenCheck[0] = GetScreenToWorld2D({ windowSize.x + Pixels(20), windowSize.y + Pixels(20) }, camera);
                 screenCheck[1] = GetScreenToWorld2D({ Pixels(-20), windowSize.y + Pixels(20) }, camera);
                 screenCheck[2] = GetScreenToWorld2D({ Pixels(-20), Pixels(-20) }, camera);
                 screenCheck[3] = GetScreenToWorld2D({ windowSize.x + Pixels(20), Pixels(-20) }, camera);
 
+                    //sort enemies
                 enemyOnScreen.clear();
                 for (int i = 0; i < enemies; i++)
                     if (IsOnScreen(enemy[i].pos))
                         enemyOnScreen.push_back(&enemy[i]);
 
+                //actions
+                    //canon ball actions
+                toErase.clear();
+                for (int i = 0; i < canonBalls.size(); i++)
+                {
+                    if (IsOnScreen(canonBalls[i].pos))
+                    {
+                        
+                        canonBalls[i].MoveCanonBall();
+                        if (canonBalls[i].parent)
+                        {
+                            if (CanonBallCollision(player, canonBalls[i]))
+                                toErase.push_back(i);
+                        }
+                        else
+                            for (int j = 0; j < enemyOnScreen.size(); j++)
+                                if (CanonBallCollision(*enemyOnScreen[j], canonBalls[i]))
+                                    toErase.push_back(i);
+                    }
+                    else
+                        toErase.push_back(i);
+                }
+                
+                for (int i = 0; i < toErase.size(); i++)
+                {
+                    tempInt = toErase[i] - i; //DON'T TOUCH!!!
+                    canonBalls.erase(canonBalls.begin() + tempInt);
+                }
+
+                    //enemy actions
                 for (int i = 0; i < enemyOnScreen.size(); i++)
                 {
                     for (int j = 0; j < 4; j++)
@@ -95,29 +132,39 @@ int main()
                             SpikeCollision(*enemyOnScreen[i], player, j);
                         if (enemyOnScreen[i]->equipment[j].name == "spike")
                             SpikeCollision(player, *enemyOnScreen[i], j);
+
+                        if (enemyOnScreen[i]->equipment[j].name == "canon")
+                            TryShootingCanonball(*enemyOnScreen[i], j);
                     }
                     enemyOnScreen[i]->CheckKnockback();
-
                 }
 
-                player.CheckKnockback();
+                    //player actions
+                for (int i = 0; i < 4; i++)
+                    if (player.equipment[i].name == "canon")
+                        TryShootingCanonball(player, i);
+                if(player.CheckKnockback())
+                    movementControls = 0;
 
-                //movement
-                if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player, { 1, 1 }, 1, doubleMovementKeys);
-                if (IsKeyDown(KEY_S) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player, { -1, 1 }, 3, doubleMovementKeys);
-                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player, { -1, -1 }, 5, doubleMovementKeys);
-                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player, { 1, -1 }, 7, doubleMovementKeys);
-
-                if (!doubleMovementKeys)
+                //player movement
+                if(movementControls)
                 {
-                    MoveInOneDirection(KEY_D, KEY_A, 0);
-                    MoveInOneDirection(KEY_S, KEY_W, 2);
-                    MoveInOneDirection(KEY_A, KEY_D, 4);
-                    MoveInOneDirection(KEY_W, KEY_S, 6);
+                    if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
+                        MoveInTwoDirections(player, { 1, 1 }, 1, doubleMovementKeys);
+                    if (IsKeyDown(KEY_S) && IsKeyDown(KEY_A))
+                        MoveInTwoDirections(player, { -1, 1 }, 3, doubleMovementKeys);
+                    if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
+                        MoveInTwoDirections(player, { -1, -1 }, 5, doubleMovementKeys);
+                    if (IsKeyDown(KEY_W) && IsKeyDown(KEY_D))
+                        MoveInTwoDirections(player, { 1, -1 }, 7, doubleMovementKeys);
+
+                    if (!doubleMovementKeys)
+                    {
+                        MoveInOneDirection(KEY_D, KEY_A, 0);
+                        MoveInOneDirection(KEY_S, KEY_W, 2);
+                        MoveInOneDirection(KEY_A, KEY_D, 4);
+                        MoveInOneDirection(KEY_W, KEY_S, 6);
+                    }
                 }
 
                 //map player's rotating direction
@@ -127,7 +174,9 @@ int main()
 
                 //variable sets and resets
                 doubleMovementKeys = 0;
+                movementControls = 1;
                 camera.target = player.pos;
+                inGameFrames++;
 
                 //game screen listens
                 if (IsKeyPressed(KEY_E))
@@ -144,23 +193,11 @@ int main()
                 else if (IsKeyPressed(KEY_TWO))
                     player.UpdateSprite(&playerSprite[2]);
                 else if (IsKeyPressed(KEY_THREE))
-                    std::cout << player.movementIndex << std::endl;
+                    std::cout << player.id << std::endl;
 
                 tempPos = GetWorldToScreen2D(player.pos, camera);
                 tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), player.rotation / toDegrees);
                 DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, YELLOW);
-
-                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[0].slot * 2]) / toDegrees);
-                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, GREEN);
-
-                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[1].slot * 2]) / toDegrees);
-                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, GRAY);
-
-                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[2].slot * 2]) / toDegrees);
-                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, WHITE);
-
-                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), AddRotation(player.rotation, directionRotation[player.equipment[3].slot * 2]) / toDegrees);
-                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, DARKBLUE);
             }
             break;
 

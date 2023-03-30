@@ -17,8 +17,22 @@ void SpikeLines(Equipment& spike)
     spikePoint[0] = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation - 90) / toDegrees);
     spikePoint[1] = HypotenuseCoordinates(pos, spike.size.x, spike.rotation / toDegrees);
     spikePoint[2] = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation + 90) / toDegrees);
+
     DrawLine(spikePoint[0].x, spikePoint[0].y, spikePoint[1].x, spikePoint[1].y, RED);
     DrawLine(spikePoint[1].x, spikePoint[1].y, spikePoint[2].x, spikePoint[2].y, RED);
+}
+void CanonBallLines(GameObject& ball)
+{
+    Vector2 pos = GetWorldToScreen2D(ball.pos, camera);
+    ballPoint[0] = { pos.x + ball.size.x, pos.y };
+    ballPoint[1] = { pos.x, pos.y + ball.size.y };
+    ballPoint[2] = { pos.x - ball.size.x, pos.y };
+    ballPoint[3] = { pos.x, pos.y - ball.size.y };
+
+    DrawLine(ballPoint[0].x, ballPoint[0].y, ballPoint[1].x, ballPoint[1].y, RED);
+    DrawLine(ballPoint[1].x, ballPoint[1].y, ballPoint[2].x, ballPoint[2].y, RED);
+    DrawLine(ballPoint[2].x, ballPoint[2].y, ballPoint[3].x, ballPoint[3].y, RED);
+    DrawLine(ballPoint[3].x, ballPoint[3].y, ballPoint[0].x, ballPoint[0].y, RED);
 }
 
 bool LineCellCollision(GameObject& cell, Vector2 point1, Vector2 point2)
@@ -38,14 +52,25 @@ bool LineCellCollision(GameObject& cell, Vector2 point1, Vector2 point2)
         return 1;
     return 0;
 }
-bool SpikeCollision(Cell& attacked, Cell& attacker, int spikeSlot)
+void SpikeCollision(Cell& attacked, Cell& attacker, int spikeSlot)
 {
     SpikeLines(attacker.equipment[spikeSlot]);
 
     //check collision for both of the spike's lines
     if (LineCellCollision(attacked, spikePoint[0], spikePoint[1]) || LineCellCollision(attacked, spikePoint[1], spikePoint[2]))
         if (attacked.knockbackFrames < 1)
-            attacked.SetKnockback(24, AddRotation(attacker.rotation, directionRotation[spikeSlot * 2]) / toDegrees);
-    return 1;
+            attacked.SetKnockback(16, AddRotation(attacker.rotation, directionRotation[spikeSlot * 2]) / toDegrees);
+}
+bool CanonBallCollision(Cell& attacked, CanonBall& ball)
+{
+    CanonBallLines(ball);
+
+    //check collision for all of the ball's lines
+    for (int i = 0; i < 3; i++)
+        if (LineCellCollision(attacked, ballPoint[i], ballPoint[i + 1]))
+            return 1;
+
+    if (LineCellCollision(attacked, ballPoint[3], ballPoint[0]))
+        return 1;
     return 0;
 }

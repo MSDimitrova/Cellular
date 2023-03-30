@@ -22,7 +22,7 @@ struct Prefab
             data = json::parse(f);
         }
     }
-} spike, canon, bristles, tail;
+};
 
 struct GameObject
 {
@@ -105,7 +105,7 @@ struct Equipment : GameObject
 
         tempPos = { parent.pos.x + tempV2.x + directionPos[slot * 2].x * size.x / 2,
             parent.pos.y + tempV2.y + directionPos[slot * 2].y * size.x / 2 };
-        
+
         pos = { ((tempPos.x - parent.pos.x) * cos(tempRotation)) - ((parent.pos.y - tempPos.y) * sin(tempRotation)) + parent.pos.x,
             parent.pos.y - ((parent.pos.y - tempPos.y) * cos(tempRotation)) + ((tempPos.x - parent.pos.x) * sin(tempRotation)) };
 
@@ -130,9 +130,9 @@ struct Equipment : GameObject
 struct Cell : GameObject
 {
     int id = -1;
+    int speed = 0;
     int maxHp = 150;
     int hp = maxHp;
-    int speed = 0;
     int movementIndex = -1;
     int rotationIndex = -1;
     int knockbackFrames = 0;
@@ -159,10 +159,10 @@ struct Cell : GameObject
     {
         knockbackFrames = _knockbackFrames;
         knockbackAngle = _knockbackAngle;
-        speed = Pixels(6);
+        speed = Pixels(4);
     }
 
-    void CheckKnockback()
+    bool CheckKnockback()
     {
         if (knockbackFrames > 0)
         {
@@ -170,9 +170,22 @@ struct Cell : GameObject
             knockbackFrames--;
             if (knockbackFrames == 0)
                 speed = Pixels(1);
-            else if(ceil(Pixels(speed, 1)) != ceil(knockbackFrames / 8))
+            else if(ceil(Pixels(speed, 1)) != ceil(knockbackFrames / 4))
                 speed--;
+            return 1;
         }
+        return 0;
+    }
+};
+
+struct CanonBall : GameObject
+{
+    bool parent = 0; //0 - player, 1 - enemy
+    int speed = 0;
+
+    void MoveCanonBall()
+    {
+        pos = HypotenuseCoordinates(pos, speed, rotation);
     }
 };
 
@@ -181,7 +194,11 @@ struct Food : GameObject
     int type = 0; //dmg, speed, evo points or recipe
 };
 
-Prefab* prefabPart[] = { &spike, &canon, &bristles, &tail }; //0 - spike, 1 - canon, 2 - bristles, 3 - tail
+Prefab canonBallPrefab;
+std::vector<CanonBall> canonBalls;
+
+Prefab spike, canon, bristles, tail;
+Prefab* prefabPart[] = { &spike, &canon, &bristles, &tail, }; //0 - spike, 1 - canon, 2 - bristles, 3 - tail
 
 Prefab prefabEnemy[prefabEnemies];
 Cell enemy[enemies];

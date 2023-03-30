@@ -136,10 +136,12 @@
     <ClCompile Include="..\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\headers\collisions.hpp" />
+    <ClInclude Include="..\..\headers\drawing.hpp" />
     <ClInclude Include="..\..\headers\gameObjects.hpp" />
     <ClInclude Include="..\..\headers\libraries.hpp" />
-    <ClInclude Include="..\..\headers\advancedUtility.hpp" />
-    <ClInclude Include="..\..\headers\basicUtility.hpp" />
+    <ClInclude Include="..\..\headers\cellFunctions.hpp" />
+    <ClInclude Include="..\..\headers\utility.hpp" />
     <ClInclude Include="..\..\headers\variables.hpp" />
   </ItemGroup>
   <ItemGroup>

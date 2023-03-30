@@ -29,10 +29,16 @@
     <ClInclude Include="..\..\headers\variables.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\headers\basicUtility.hpp">
+    <ClInclude Include="..\..\headers\utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\headers\advancedUtility.hpp">
+    <ClInclude Include="..\..\headers\cellFunctions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\headers\collisions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\headers\drawing.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

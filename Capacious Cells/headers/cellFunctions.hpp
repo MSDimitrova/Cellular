@@ -31,3 +31,18 @@ void SetupEnemyPos()
     enemyPos[2] = { Pixels(-60), 0 };
     enemyPos[3] = { 0, Pixels(-60) };
 }
+
+void TryShootingCanonball(Cell& cell, int canonSlot)
+{
+    if (inGameFrames % 60 == 0 && inGameFrames > 0)
+    {
+        CanonBall ball;
+        ball.pos = cell.equipment[canonSlot].pos;
+        ball.rotation = AddRotation(cell.rotation, directionRotation[canonSlot * 2]) / toDegrees;
+        ball.speed = Pixels(3);
+        ball.UpdateSprite(&canonBallPrefab.sprite[0]);
+        if (cell.id != -1) //check if the player is the parent (only cell which's id doesn't change (the default is -1))
+            ball.parent = 1;
+        canonBalls.push_back(ball);
+    }
+}

@@ -38,6 +38,8 @@ void UpdateScreen(Color bg)
 
     for (int i = 0; i < enemyOnScreen.size(); i++)
         DrawCell(*enemyOnScreen[i]);
+    for (int i = 0; i < canonBalls.size(); i++)
+        DrawGameObject(canonBalls[i]);
     DrawCell(player);
 
     EndMode2D();
