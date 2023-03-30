@@ -78,7 +78,7 @@ struct GameObject
 
 struct Equipment : GameObject
 {
-    bool boostType = 0; //dmg or speed
+    bool boostType = 0; //attack or speed
     int lvl = 1;
     int slot = 0;
     int cost = 0;
@@ -131,12 +131,13 @@ struct Cell : GameObject
 {
     int id = -1;
     int speed = 0;
-    int maxHp = 150;
-    int hp = maxHp;
-    int movementIndex = -1;
-    int rotationIndex = -1;
+    int maxHp = initialPlayerHp, hp = maxHp, damage = 0;
+    int hitFrames = 0;
+    int movementIndex = -1, rotationIndex = -1;
+
     int knockbackFrames = 0;
     float knockbackAngle = 0;
+
     Equipment equipment[4];
 
     void Setup(Prefab& prefab, int _id = -1)
@@ -162,7 +163,7 @@ struct Cell : GameObject
         speed = Pixels(4);
     }
 
-    bool CheckKnockback()
+    bool ApplyKnockback()
     {
         if (knockbackFrames > 0)
         {
@@ -176,12 +177,36 @@ struct Cell : GameObject
         }
         return 0;
     }
+
+    void ApplyInvincibility()
+    {
+        if (hitFrames > 0)
+        {
+            damage = 0;
+            hitFrames--;
+            if (hitFrames == 0)
+                currentSprite = sprite[0];
+            else if (currentSprite != &whiteCellSprite[resolution])
+                currentSprite = &whiteCellSprite[resolution];
+        }
+    }
+
+    void ApplyDamage()
+    {
+        if (damage > 0)
+        {
+            hp -= damage;
+            hitFrames = 20;
+            damage = 0;
+        }
+    }
 };
 
 struct CanonBall : GameObject
 {
     bool parent = 0; //0 - player, 1 - enemy
     int speed = 0;
+    int attack = 0;
 
     void MoveCanonBall()
     {
@@ -191,7 +216,7 @@ struct CanonBall : GameObject
 
 struct Food : GameObject
 {
-    int type = 0; //dmg, speed, evo points or recipe
+    int type = 0; //attack, speed, evo points or recipe
 };
 
 Prefab canonBallPrefab;
@@ -201,7 +226,7 @@ Prefab spike, canon, bristles, tail;
 Prefab* prefabPart[] = { &spike, &canon, &bristles, &tail, }; //0 - spike, 1 - canon, 2 - bristles, 3 - tail
 
 Prefab prefabEnemy[prefabEnemies];
-Cell enemy[enemies];
+std::vector<Cell> enemy(enemies);
 std::vector<Cell*> enemyOnScreen;
 
 Cell player;

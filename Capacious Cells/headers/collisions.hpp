@@ -59,7 +59,10 @@ void SpikeCollision(Cell& attacked, Cell& attacker, int spikeSlot)
     //check collision for both of the spike's lines
     if (LineCellCollision(attacked, spikePoint[0], spikePoint[1]) || LineCellCollision(attacked, spikePoint[1], spikePoint[2]))
         if (attacked.knockbackFrames < 1)
+        {
+            attacked.damage += attacker.equipment[spikeSlot].boost;
             attacked.SetKnockback(16, AddRotation(attacker.rotation, directionRotation[spikeSlot * 2]) / toDegrees);
+        }
 }
 bool CanonBallCollision(Cell& attacked, CanonBall& ball)
 {
@@ -68,9 +71,15 @@ bool CanonBallCollision(Cell& attacked, CanonBall& ball)
     //check collision for all of the ball's lines
     for (int i = 0; i < 3; i++)
         if (LineCellCollision(attacked, ballPoint[i], ballPoint[i + 1]))
+        {
+            attacked.damage += ball.attack;
             return 1;
+        }
 
     if (LineCellCollision(attacked, ballPoint[3], ballPoint[0]))
+    {
+        attacked.damage += ball.attack;
         return 1;
+    }
     return 0;
 }
