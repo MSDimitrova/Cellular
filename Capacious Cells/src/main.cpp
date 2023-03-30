@@ -44,7 +44,8 @@ int main()
     for (int i = 0; i < prefabEnemies; i++)
         prefabEnemy[i].Setup(prefabEnemyName[i]);
 
-    SetupVariables();
+    //invincibilityFrames();
+    screen = 2;
 
     //start game runtime
     while (!WindowShouldClose())
@@ -52,230 +53,247 @@ int main()
         pause = screen;
         switch (screen)
         {
-        case 0: //game screen
-        {
-            UpdateScreen(BLACK);
-
-            //choosing what to render
-                //setup screen checks
-            screenCheck[0] = GetScreenToWorld2D({ windowSize.x + Pixels(20), windowSize.y + Pixels(20) }, camera);
-            screenCheck[1] = GetScreenToWorld2D({ Pixels(-20), windowSize.y + Pixels(20) }, camera);
-            screenCheck[2] = GetScreenToWorld2D({ Pixels(-20), Pixels(-20) }, camera);
-            screenCheck[3] = GetScreenToWorld2D({ windowSize.x + Pixels(20), Pixels(-20) }, camera);
-
-            //sort enemies
-            enemyOnScreen.clear();
-            for (int i = 0; i < enemies; i++)
-                if (IsOnScreen(enemy[i].pos))
-                    enemyOnScreen.push_back(&enemy[i]);
-
-            //kill cells
-                //kill enemies
-            toErase.clear();
-            for (int i = 0; i < enemyOnScreen.size(); i++)
-                if (enemyOnScreen[i]->hp < 1)
-                    toErase.push_back(i);
-
-            for (int i = 0; i < toErase.size(); i++)
+            case 0: //game screen
             {
-                tempInt = toErase[i] - i; //DON'T TOUCH!!!
-                enemyOnScreen.erase(enemyOnScreen.begin() + tempInt);
-                //enemy.erase(enemy.begin() + tempInt);
-            }
+                UpdateScreen(BLACK);
 
-            //actions
-                //canon ball actions
-            toErase.clear();
-            for (int i = 0; i < canonBalls.size(); i++)
-                if (IsOnScreen(canonBalls[i].pos))
+                //choosing what to render
+                    //setup screen checks
+                screenCheck[0] = GetScreenToWorld2D({ windowSize.x + Pixels(20), windowSize.y + Pixels(20) }, camera);
+                screenCheck[1] = GetScreenToWorld2D({ Pixels(-20), windowSize.y + Pixels(20) }, camera);
+                screenCheck[2] = GetScreenToWorld2D({ Pixels(-20), Pixels(-20) }, camera);
+                screenCheck[3] = GetScreenToWorld2D({ windowSize.x + Pixels(20), Pixels(-20) }, camera);
+
+                //sort enemies
+                enemyOnScreen.clear();
+                for (int i = 0; i < enemies; i++)
+                    if (IsOnScreen(enemy[i].pos))
+                        enemyOnScreen.push_back(&enemy[i]);
+
+                //kill cells
+                    //kill enemies
+                toErase.clear();
+                for (int i = 0; i < enemyOnScreen.size(); i++)
+                    if (enemyOnScreen[i]->hp < 1)
+                        toErase.push_back(i);
+
+                for (int i = 0; i < toErase.size(); i++)
                 {
+                    tempInt = toErase[i] - i; //DON'T TOUCH!!!
+                    enemyOnScreen.erase(enemyOnScreen.begin() + tempInt);
+                    //enemy.erase(enemy.begin() + tempInt);
+                }
 
-                    canonBalls[i].MoveCanonBall();
-                    if (canonBalls[i].parent)
+                //actions
+                    //canon ball actions
+                toErase.clear();
+                for (int i = 0; i < canonBalls.size(); i++)
+                    if (IsOnScreen(canonBalls[i].pos))
                     {
-                        if (CanonBallCollision(player, canonBalls[i]))
-                            toErase.push_back(i);
+
+                        canonBalls[i].MoveCanonBall();
+                        if (canonBalls[i].parent)
+                        {
+                            if (CanonBallCollision(player, canonBalls[i]))
+                                toErase.push_back(i);
+                        }
+                        else
+                            for (int j = 0; j < enemyOnScreen.size(); j++)
+                                if (CanonBallCollision(*enemyOnScreen[j], canonBalls[i]))
+                                    toErase.push_back(i);
                     }
                     else
-                        for (int j = 0; j < enemyOnScreen.size(); j++)
-                            if (CanonBallCollision(*enemyOnScreen[j], canonBalls[i]))
-                                toErase.push_back(i);
+                        toErase.push_back(i);
+
+                for (int i = 0; i < toErase.size(); i++)
+                {
+                    tempInt = toErase[i] - i; //DON'T TOUCH!!!
+                    canonBalls.erase(canonBalls.begin() + tempInt);
+                }
+
+                //enemy actions
+                for (int i = 0; i < enemyOnScreen.size(); i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        if (player.equipment[j].name == "spike")
+                            SpikeCollision(*enemyOnScreen[i], player, j);
+                        if (enemyOnScreen[i]->equipment[j].name == "spike")
+                            SpikeCollision(player, *enemyOnScreen[i], j);
+
+                        if (enemyOnScreen[i]->equipment[j].name == "canon")
+                            TryShootingCanonball(*enemyOnScreen[i], j);
+                    }
+                    enemyOnScreen[i]->ApplyKnockback();
+                    enemyOnScreen[i]->ApplyInvincibility();
+                    enemyOnScreen[i]->ApplyDamage();
+                }
+
+                //player actions
+                for (int i = 0; i < 4; i++)
+                    if (player.equipment[i].name == "canon")
+                        TryShootingCanonball(player, i);
+                if (player.ApplyKnockback())
+                    movementControls = 0;
+                player.ApplyInvincibility();
+                player.ApplyDamage();
+
+                //player movement
+                if (movementControls)
+                {
+                    if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
+                        MoveInTwoDirections(player, { 1, 1 }, 1, doubleMovementKeys);
+                    if (IsKeyDown(KEY_S) && IsKeyDown(KEY_A))
+                        MoveInTwoDirections(player, { -1, 1 }, 3, doubleMovementKeys);
+                    if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
+                        MoveInTwoDirections(player, { -1, -1 }, 5, doubleMovementKeys);
+                    if (IsKeyDown(KEY_W) && IsKeyDown(KEY_D))
+                        MoveInTwoDirections(player, { 1, -1 }, 7, doubleMovementKeys);
+
+                    if (!doubleMovementKeys)
+                    {
+                        MoveInOneDirection(KEY_D, KEY_A, 0);
+                        MoveInOneDirection(KEY_S, KEY_W, 2);
+                        MoveInOneDirection(KEY_A, KEY_D, 4);
+                        MoveInOneDirection(KEY_W, KEY_S, 6);
+                    }
+                }
+
+                //map player's rotating direction
+                player.rotationIndex = floor(player.rotation / 45);
+                if (player.rotationIndex < 0)
+                    player.rotationIndex += 8;
+
+                //variable sets and resets
+                doubleMovementKeys = 0;
+                movementControls = 1;
+                camera.target = player.pos;
+                inGameFrames++;
+
+                //game screen listens
+                if (IsKeyPressed(KEY_E))
+                    screen = 1;
+                else if (IsKeyPressed(KEY_ESCAPE))
+                {
+                    wasMousePos = GetMousePosition();
+                    screen = 3;
+                }
+
+                //debug
+                if (IsKeyPressed(KEY_ONE))
+                    player.UpdateSprite(&playerSprite[0]);
+                else if (IsKeyPressed(KEY_TWO))
+                    player.UpdateSprite(&playerSprite[2]);
+                else if (IsKeyPressed(KEY_THREE))
+                    std::cout << player.id << std::endl;
+
+                tempPos = GetWorldToScreen2D(player.pos, camera);
+                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), player.rotation / toDegrees);
+                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, YELLOW);
+
+                if (player.hp < 1)
+                {
+                    player.hp = initialPlayerHp;
+                    screen = 4;
+                }
+            }
+            break;
+
+            case 1: //evolve screen
+            {
+                UpdateScreen(BLUE);
+
+                if (targetEquipment == -1)
+                {
+                    if (IsKeyPressed(KEY_ONE))
+                        targetEquipment = 0;
+                    else if (IsKeyPressed(KEY_TWO))
+                        targetEquipment = 1;
+                    else if (IsKeyPressed(KEY_THREE))
+                        targetEquipment = 2;
+                    else if (IsKeyPressed(KEY_FOUR))
+                        targetEquipment = 3;
+                }
+                else if (targetSlot == -1)
+                {
+                    if (IsKeyPressed(KEY_ONE))
+                        targetSlot = 0;
+                    else if (IsKeyPressed(KEY_TWO))
+                        targetSlot = 1;
+                    else if (IsKeyPressed(KEY_THREE))
+                        targetSlot = 2;
+                    else if (IsKeyPressed(KEY_FOUR))
+                        targetSlot = 3;
                 }
                 else
-                    toErase.push_back(i);
-
-            for (int i = 0; i < toErase.size(); i++)
-            {
-                tempInt = toErase[i] - i; //DON'T TOUCH!!!
-                canonBalls.erase(canonBalls.begin() + tempInt);
-            }
-
-            //enemy actions
-            for (int i = 0; i < enemyOnScreen.size(); i++)
-            {
-                for (int j = 0; j < 4; j++)
                 {
-                    if (player.equipment[j].name == "spike")
-                        SpikeCollision(*enemyOnScreen[i], player, j);
-                    if (enemyOnScreen[i]->equipment[j].name == "spike")
-                        SpikeCollision(player, *enemyOnScreen[i], j);
-
-                    if (enemyOnScreen[i]->equipment[j].name == "canon")
-                        TryShootingCanonball(*enemyOnScreen[i], j);
+                    Equip(player, targetEquipment, targetSlot);
+                    targetEquipment = -1;
+                    targetSlot = -1;
                 }
-                enemyOnScreen[i]->ApplyKnockback();
-                enemyOnScreen[i]->ApplyInvincibility();
-                enemyOnScreen[i]->ApplyDamage();
-            }
 
-            //player actions
-            for (int i = 0; i < 4; i++)
-                if (player.equipment[i].name == "canon")
-                    TryShootingCanonball(player, i);
-            if (player.ApplyKnockback())
-                movementControls = 0;
-            player.ApplyInvincibility();
-            player.ApplyDamage();
-
-            //player movement
-            if (movementControls)
-            {
-                if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player, { 1, 1 }, 1, doubleMovementKeys);
-                if (IsKeyDown(KEY_S) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player, { -1, 1 }, 3, doubleMovementKeys);
-                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_A))
-                    MoveInTwoDirections(player, { -1, -1 }, 5, doubleMovementKeys);
-                if (IsKeyDown(KEY_W) && IsKeyDown(KEY_D))
-                    MoveInTwoDirections(player, { 1, -1 }, 7, doubleMovementKeys);
-
-                if (!doubleMovementKeys)
+                //game screen listens
+                if (IsKeyPressed(KEY_ESCAPE))
                 {
-                    MoveInOneDirection(KEY_D, KEY_A, 0);
-                    MoveInOneDirection(KEY_S, KEY_W, 2);
-                    MoveInOneDirection(KEY_A, KEY_D, 4);
-                    MoveInOneDirection(KEY_W, KEY_S, 6);
+                    wasMousePos = GetMousePosition();
+                    screen = 3;
+                }
+                else if (IsKeyPressed(KEY_E))
+                {
+                    SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
+                    screen = 0;
                 }
             }
+            break;
 
-            //map player's rotating direction
-            player.rotationIndex = floor(player.rotation / 45);
-            if (player.rotationIndex < 0)
-                player.rotationIndex += 8;
-
-            //variable sets and resets
-            doubleMovementKeys = 0;
-            movementControls = 1;
-            camera.target = player.pos;
-            inGameFrames++;
-
-            //game screen listens
-            if (IsKeyPressed(KEY_E))
-                screen = 1;
-            else if (IsKeyPressed(KEY_ESCAPE))
-            {
-                wasMousePos = GetMousePosition();
-                screen = 3;
-            }
-
-            //debug
-            if (IsKeyPressed(KEY_ONE))
-                player.UpdateSprite(&playerSprite[0]);
-            else if (IsKeyPressed(KEY_TWO))
-                player.UpdateSprite(&playerSprite[2]);
-            else if (IsKeyPressed(KEY_THREE))
-                std::cout << player.id << std::endl;
-
-            tempPos = GetWorldToScreen2D(player.pos, camera);
-            tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), player.rotation / toDegrees);
-            DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, YELLOW);
-
-            if (player.hp < 1)
+            case 2: //main menu
             {
                 SetupVariables();
-                player.hp = initialPlayerHp;
-                enemyOnScreen.clear();
-                screen = 2;
+                UpdateScreen(DARKGRAY);
+
+
+
+                //game screen listens
+                if (IsKeyPressed(KEY_ENTER))
+                {
+                    SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
+                    screen = 0;
+                }
             }
-        }
-        break;
+            break;
 
-        case 1: //evolve screen
-        {
-            UpdateScreen(BLUE);
-
-            if (targetEquipment == -1)
+            case 3: //pause screen
             {
-                if (IsKeyPressed(KEY_ONE))
-                    targetEquipment = 0;
-                else if (IsKeyPressed(KEY_TWO))
-                    targetEquipment = 1;
-                else if (IsKeyPressed(KEY_THREE))
-                    targetEquipment = 2;
-                else if (IsKeyPressed(KEY_FOUR))
-                    targetEquipment = 3;
+                UpdateScreen(DARKBLUE);
+
+
+
+                //game screen listens
+                if (IsKeyPressed(KEY_ESCAPE))
+                {
+                    SetMousePosition(wasMousePos.x, wasMousePos.y);
+                    screen = 0;
+                }
             }
-            else if (targetSlot == -1)
+            break;
+
+            case 4: //death screen
             {
-                if (IsKeyPressed(KEY_ONE))
-                    targetSlot = 0;
-                else if (IsKeyPressed(KEY_TWO))
-                    targetSlot = 1;
-                else if (IsKeyPressed(KEY_THREE))
-                    targetSlot = 2;
-                else if (IsKeyPressed(KEY_FOUR))
-                    targetSlot = 3;
+                UpdateScreen(GRAY);
+
+
+
+                //game screen listens
+                if (IsKeyPressed(KEY_ESCAPE))
+                    screen = 2;
+                else if (IsKeyPressed(KEY_ENTER))
+                {
+                    SetupVariables();
+                    SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
+                    screen = 0;
+                }
             }
-            else
-            {
-                Equip(player, targetEquipment, targetSlot);
-                targetEquipment = -1;
-                targetSlot = -1;
-            }
-
-            //game screen listens
-            if (IsKeyPressed(KEY_ESCAPE))
-            {
-                wasMousePos = GetMousePosition();
-                screen = 3;
-            }
-            else if (IsKeyPressed(KEY_E))
-            {
-                SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
-                screen = 0;
-            }
-        }
-        break;
-
-        case 2: //main menu
-        {
-            UpdateScreen(DARKGRAY);
-
-
-
-            //game screen listens
-            if (IsKeyPressed(KEY_ENTER))
-            {
-                SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
-                screen = 0;
-            }
-        }
-        break;
-
-        case 3: //pause screen
-        {
-            UpdateScreen(DARKBLUE);
-
-
-
-            //game screen listens
-            if (IsKeyPressed(KEY_ESCAPE))
-            {
-                SetMousePosition(wasMousePos.x, wasMousePos.y);
-                screen = 0;
-            }
-        }
-        break;
+            break;
         }
     }
     CloseWindow();

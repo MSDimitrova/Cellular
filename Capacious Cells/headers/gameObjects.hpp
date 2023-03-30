@@ -132,7 +132,7 @@ struct Cell : GameObject
     int id = -1;
     int speed = 0;
     int maxHp = initialPlayerHp, hp = maxHp, damage = 0;
-    int hitFrames = 0;
+    int invincibilityFrames = 0;
     int movementIndex = -1, rotationIndex = -1;
 
     int knockbackFrames = 0;
@@ -165,7 +165,7 @@ struct Cell : GameObject
 
     bool ApplyKnockback()
     {
-        if (knockbackFrames > 0)
+        if (knockbackFrames > 0 && !pause)
         {
             pos = HypotenuseCoordinates(pos, speed, knockbackAngle);
             knockbackFrames--;
@@ -180,11 +180,11 @@ struct Cell : GameObject
 
     void ApplyInvincibility()
     {
-        if (hitFrames > 0)
+        if (invincibilityFrames > 0 && !pause)
         {
             damage = 0;
-            hitFrames--;
-            if (hitFrames == 0)
+            invincibilityFrames--;
+            if (invincibilityFrames == 0)
                 currentSprite = sprite[0];
             else if (currentSprite != &whiteCellSprite[resolution])
                 currentSprite = &whiteCellSprite[resolution];
@@ -193,10 +193,10 @@ struct Cell : GameObject
 
     void ApplyDamage()
     {
-        if (damage > 0)
+        if (damage > 0 && !pause)
         {
             hp -= damage;
-            hitFrames = 20;
+            invincibilityFrames = 20;
             damage = 0;
         }
     }
@@ -210,7 +210,8 @@ struct CanonBall : GameObject
 
     void MoveCanonBall()
     {
-        pos = HypotenuseCoordinates(pos, speed, rotation);
+        if(!pause)
+            pos = HypotenuseCoordinates(pos, speed, rotation);
     }
 };
 

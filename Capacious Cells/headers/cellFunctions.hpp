@@ -10,7 +10,7 @@ void Equip(Cell& cell, int _part, int _slot)
 void SetupVariables()
 {
     //setup variables
-    doubleMovementKeys = 0, playerEP = 3, targetEquipment = -1, targetSlot = -1, screen = 2;
+    doubleMovementKeys = 0, playerEP = 3, targetEquipment = -1, targetSlot = -1;
 
     //setup margins
     cellMargin[0] = { Pixels(13), Pixels(-.5) };
@@ -28,17 +28,26 @@ void SetupVariables()
         enemy[i].Setup(prefabEnemy[0], i);
 
     //setup player
-    player.UpdateSprite(&playerSprite[0]);
     player.pos = CENTER;
+    player.rotation = 0;
     player.speed = Pixels(1);
+
+    player.knockbackFrames = 0;
+    player.invincibilityFrames = 0;
+
+    player.UpdateSprite(&playerSprite[0]);
 
     //setup misc.
     camera = { CENTER, player.pos, 0, 1.0f };
     canonBallPrefab.Setup("canonBall");
 
+    //clear vectors
+    canonBalls.clear();
+    enemyOnScreen.clear();
+
     //debug
     for (int i = 0; i < 4; i++)
-        Equip(player, 1, i);
+        Equip(player, 0, i);
 
     for (int i = 0; i < enemies; i++)
         for (int j = 0; j < 4; j++)

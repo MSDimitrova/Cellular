@@ -4,7 +4,7 @@
 //used only in main
 bool doubleMovementKeys;
 int playerEP, targetEquipment, targetSlot;
-int screen; //0 = game screen, 1 = evolve screen, 2 = main menu, 3 = pause screen
+int screen; //0 = game screen, 1 = evolve screen, 2 = main menu, 3 = pause screen, 4 - death screen
 Vector2 wasMousePos;
 
 //dummies
