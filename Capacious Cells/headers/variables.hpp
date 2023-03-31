@@ -31,7 +31,7 @@ bool resolution = 0;
 Vector2 CENTER, windowSize, cellMargin[4], enemyPos[enemies], margin;
 
 //sprites
-Texture2D missingTexture, whiteCellSprite[2], playerSprite[3];
+Texture2D missingTexture, whiteCellSprite, enemyCellSprite, playerSprite[3];
 
 //objects
 Camera2D camera;

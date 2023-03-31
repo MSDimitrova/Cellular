@@ -18,8 +18,8 @@ void SpikeLines(Equipment& spike)
     spikePoint[1] = HypotenuseCoordinates(pos, spike.size.x, spike.rotation / toDegrees);
     spikePoint[2] = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation + 90) / toDegrees);
 
-    DrawLine(spikePoint[0].x, spikePoint[0].y, spikePoint[1].x, spikePoint[1].y, RED);
-    DrawLine(spikePoint[1].x, spikePoint[1].y, spikePoint[2].x, spikePoint[2].y, RED);
+    /*DrawLine(spikePoint[0].x, spikePoint[0].y, spikePoint[1].x, spikePoint[1].y, RED);
+    DrawLine(spikePoint[1].x, spikePoint[1].y, spikePoint[2].x, spikePoint[2].y, RED);*/
 }
 void CanonBallLines(GameObject& ball)
 {
@@ -29,10 +29,10 @@ void CanonBallLines(GameObject& ball)
     ballPoint[2] = { pos.x - ball.size.x, pos.y };
     ballPoint[3] = { pos.x, pos.y - ball.size.y };
 
-    DrawLine(ballPoint[0].x, ballPoint[0].y, ballPoint[1].x, ballPoint[1].y, RED);
+    /*DrawLine(ballPoint[0].x, ballPoint[0].y, ballPoint[1].x, ballPoint[1].y, RED);
     DrawLine(ballPoint[1].x, ballPoint[1].y, ballPoint[2].x, ballPoint[2].y, RED);
     DrawLine(ballPoint[2].x, ballPoint[2].y, ballPoint[3].x, ballPoint[3].y, RED);
-    DrawLine(ballPoint[3].x, ballPoint[3].y, ballPoint[0].x, ballPoint[0].y, RED);
+    DrawLine(ballPoint[3].x, ballPoint[3].y, ballPoint[0].x, ballPoint[0].y, RED);*/
 }
 
 bool LineCellCollision(GameObject& cell, Vector2 point1, Vector2 point2)
@@ -42,11 +42,11 @@ bool LineCellCollision(GameObject& cell, Vector2 point1, Vector2 point2)
     //cycle collision checks between cell's lines and given line
     for (int i = 0; i < 5; i++)
     {
-        DrawLine(cellPoint[i].x, cellPoint[i].y, cellPoint[i + 1].x, cellPoint[i + 1].y, BLUE);
+        //DrawLine(cellPoint[i].x, cellPoint[i].y, cellPoint[i + 1].x, cellPoint[i + 1].y, BLUE);
         if (CheckCollisionLines(point1, point2, cellPoint[i], cellPoint[i + 1], &dummyVector2))
             return 1;
     }
-    DrawLine(cellPoint[5].x, cellPoint[5].y, cellPoint[0].x, cellPoint[0].y, BLUE);
+    //DrawLine(cellPoint[5].x, cellPoint[5].y, cellPoint[0].x, cellPoint[0].y, BLUE);
 
     if (CheckCollisionLines(point1, point2, cellPoint[5], cellPoint[0], &dummyVector2))
         return 1;

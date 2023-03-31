@@ -186,8 +186,8 @@ struct Cell : GameObject
             invincibilityFrames--;
             if (invincibilityFrames == 0)
                 currentSprite = sprite[0];
-            else if (currentSprite != &whiteCellSprite[resolution])
-                currentSprite = &whiteCellSprite[resolution];
+            else if (currentSprite != &whiteCellSprite)
+                currentSprite = &whiteCellSprite;
         }
     }
 

@@ -26,11 +26,10 @@ int main()
 
     //load textures
     missingTexture = LoadTexture("../../assets/MissingTexture.png");
-
-    whiteCellSprite[0] = LoadTexture("../../assets/720p/cells/WhiteCell.png");
-    whiteCellSprite[1] = LoadTexture("../../assets/1080p/cells/WhiteCell.png");
-
+    whiteCellSprite = LoadTexture(Path(assetsFolder, "cells/WhiteCell", pngExtention).string().c_str());
+    enemyCellSprite = LoadTexture(Path(assetsFolder, "cells/EnemyCell", pngExtention).string().c_str());
     playerSprite[0] = LoadTexture(Path(assetsFolder, "cells/PlayerCell", pngExtention).string().c_str());
+
     playerSprite[1] = LoadTexture("../../assets/720p/cells/PlayerCell.png");
     playerSprite[2] = LoadTexture("../../assets/1080p/cells/PlayerCell.png");
     //background = LoadTexture("../../assets/Background.png");
