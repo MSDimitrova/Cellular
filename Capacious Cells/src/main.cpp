@@ -43,9 +43,7 @@ int main()
     for (int i = 0; i < prefabEnemies; i++)
         prefabEnemy[i].Setup(prefabEnemyName[i]);
 
-    //invincibilityFrames();
     screen = 2;
-
     //start game runtime
     while (!WindowShouldClose())
     {
@@ -83,8 +81,7 @@ int main()
                     //enemy.erase(enemy.begin() + tempInt);
                 }
 
-                //actions
-                    //canon ball actions
+                //canon ball actions
                 toErase.clear();
                 for (int i = 0; i < canonBalls.size(); i++)
                     if (IsOnScreen(canonBalls[i].pos))
@@ -104,6 +101,7 @@ int main()
                     else
                         toErase.push_back(i);
 
+                    //destroy canon balls
                 for (int i = 0; i < toErase.size(); i++)
                 {
                     tempInt = toErase[i] - i; //DON'T TOUCH!!!
@@ -113,6 +111,7 @@ int main()
                 //enemy actions
                 for (int i = 0; i < enemyOnScreen.size(); i++)
                 {
+                    //equipment
                     for (int j = 0; j < 4; j++)
                     {
                         if (player.equipment[j].name == "spike")
@@ -123,21 +122,39 @@ int main()
                         if (enemyOnScreen[i]->equipment[j].name == "canon")
                             TryShootingCanonball(*enemyOnScreen[i], j);
                     }
-                    enemyOnScreen[i]->ApplyKnockback();
+
+                    //effects and damage
                     enemyOnScreen[i]->ApplyInvincibility();
+                    enemyOnScreen[i]->ApplyKnockback();
                     enemyOnScreen[i]->ApplyDamage();
                 }
 
                 //player actions
+                    //map player's rotating direction
+                player.rotationIndex = floor(player.rotation / 45);
+                if (player.rotationIndex < 0)
+                    player.rotationIndex += 8;
+
+                    //equipment
                 for (int i = 0; i < 4; i++)
+                {
                     if (player.equipment[i].name == "canon")
                         TryShootingCanonball(player, i);
+                    if (player.equipment[i].name == "tail")
+                        if (IsKeyPressed(KEY_LEFT_SHIFT) && player.cooldownTailFrames == 0 && player.activeTailFrames == 0)
+                        {
+                            player.activeTail = 1;
+                            player.activeTailFrames = 120;
+                        }
+                }
+
+                    //effects and damage
+                player.ApplyInvincibility();
                 if (player.ApplyKnockback())
                     movementControls = 0;
-                player.ApplyInvincibility();
                 player.ApplyDamage();
 
-                //player movement
+                    //movement
                 if (movementControls)
                 {
                     if (IsKeyDown(KEY_S) && IsKeyDown(KEY_D))
@@ -158,12 +175,26 @@ int main()
                     }
                 }
 
-                //map player's rotating direction
-                player.rotationIndex = floor(player.rotation / 45);
-                if (player.rotationIndex < 0)
-                    player.rotationIndex += 8;
-
                 //variable sets and resets
+                if (playerHadTail)
+                {
+                    player.activeTailFrames = 0;
+                    player.activeTail = 0;
+                    playerHadTail = 0;
+                }
+
+                if (player.activeTailFrames > 0)
+                {
+                    player.activeTailFrames--;
+                    if (player.activeTailFrames == 0)
+                    {
+                        player.activeTail = 0;
+                        player.cooldownTailFrames = 240;
+                    }
+                }
+                else if (player.cooldownTailFrames > 0)
+                    player.cooldownTailFrames--;
+
                 doubleMovementKeys = 0;
                 movementControls = 1;
                 camera.target = player.pos;

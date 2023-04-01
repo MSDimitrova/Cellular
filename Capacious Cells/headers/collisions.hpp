@@ -68,7 +68,7 @@ bool CanonBallCollision(Cell& attacked, CanonBall& ball)
 {
     CanonBallLines(ball);
 
-    //check collision for all of the ball's lines
+    //check collision for all of the ball's lines and load damage
     for (int i = 0; i < 3; i++)
         if (LineCellCollision(attacked, ballPoint[i], ballPoint[i + 1]))
         {

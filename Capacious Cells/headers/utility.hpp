@@ -13,18 +13,18 @@ float Pixels(float pixels, bool opposite = false)
 }
 
 //transformative (math)
-int AddIndex(int a, int b, int minus = 1)
+int AddIndex(int a, int b, int c = 0)
 {
-    a += b * minus;
+    a += b + c;
     if (a > 7)
         a -= 8;
     else if (a < 0)
         a += 8;
     return a;
 }
-float AddRotation(float a, float b, int minus = 1)
+float AddRotation(float a, float b, int c = 0)
 {
-    a += b * minus;
+    a += b + c;
     if (a > 359)
         a -= 360;
     else if (a < 0)

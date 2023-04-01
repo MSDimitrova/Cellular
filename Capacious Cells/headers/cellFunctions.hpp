@@ -3,6 +3,8 @@
 
 void Equip(Cell& cell, int _part, int _slot)
 {
+    if (cell.equipment[_slot].name == "tail" && cell.id == -1)
+        playerHadTail = 1;
     cell.equipment[_slot].Setup(*prefabPart[_part]);
     cell.equipment[_slot].slot = _slot;
 }
@@ -50,7 +52,7 @@ void SetupVariables()
 
     //debug
     for (int i = 0; i < 4; i++)
-        Equip(player, 1, i);
+        Equip(player, 0, i);
 
     for (int i = 0; i < enemies; i++)
         for (int j = 0; j < 4; j++)
@@ -61,18 +63,22 @@ void MoveInOneDirection(KeyboardKey targetKey, KeyboardKey avoidKey, int index)
 {
     if (IsKeyDown(targetKey))
     {
-        player.pos.x += player.speed * directionPos[index].x;
-        player.pos.y += player.speed * directionPos[index].y;
         if (!IsKeyDown(avoidKey))
             player.movementIndex = index;
+        tempInt = player.CalculateSpeed();
+
+        player.pos.x += tempInt * directionPos[index].x;
+        player.pos.y += tempInt * directionPos[index].y;
     }
 }
 void MoveInTwoDirections(Cell& cell, Vector2 direction, int index = -1, bool& refCheck = dummyBool)
 {
-    cell.pos.x += round(sqrt(pow(cell.speed, 2) / 2)) * direction.x;
-    cell.pos.y += round(sqrt(pow(cell.speed, 2) / 2)) * direction.y;
-    if(index != -1)
+    if (index != -1)
         cell.movementIndex = index;
+    tempInt = cell.CalculateSpeed();
+
+    cell.pos.x += round(sqrt(pow(tempInt, 2) / 2)) * direction.x;
+    cell.pos.y += round(sqrt(pow(tempInt, 2) / 2)) * direction.y;
     refCheck = 1;
 }
 

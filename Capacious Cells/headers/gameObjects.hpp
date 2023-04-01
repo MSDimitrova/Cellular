@@ -129,10 +129,12 @@ struct Equipment : GameObject
 
 struct Cell : GameObject
 {
+    bool activeTail = 0;
     int id = -1;
     int speed = 0;
     int maxHp = initialPlayerHp, hp = maxHp, damage = 0;
     int invincibilityFrames = 0;
+    int activeTailFrames = 0, cooldownTailFrames = 0;
     int movementIndex = -1, rotationIndex = -1;
 
     int knockbackFrames = 0;
@@ -199,6 +201,14 @@ struct Cell : GameObject
             invincibilityFrames = 20;
             damage = 0;
         }
+    }
+
+    int CalculateSpeed()
+    {
+        for (int i = 0; i < 4; i++)
+            if ((movementIndex = AddIndex(i, 2, -rotationIndex)) && ((equipment[i].name == "bristles") || (equipment[i].name == "tail" && activeTail)))
+                return speed + equipment[i].boost;
+        return speed;
     }
 };
 
