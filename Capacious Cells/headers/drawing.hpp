@@ -29,3 +29,23 @@ void DrawCell(Cell& cell)
     else
         cell.DrawHp();
 }
+
+void DrawFrame()
+{
+    //Update screen
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawFPS(10, 10);
+    BeginMode2D(camera);
+
+    //DrawTexture(background, CENTER.x, CENTER.y, WHITE);
+    DrawCircle(CENTER.x, CENTER.y, 5, RED);
+
+    for (int i = 0; i < enemyOnScreen.size(); i++)
+        DrawCell(*enemyOnScreen[i]);
+    for (int i = 0; i < cannonBalls.size(); i++)
+        DrawGameObject(cannonBalls[i]);
+    for (int i = 0; i < foodOnScreen.size(); i++)
+        DrawGameObject(*foodOnScreen[i]);
+    DrawCell(player);
+}

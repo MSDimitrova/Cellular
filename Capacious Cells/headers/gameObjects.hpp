@@ -159,6 +159,19 @@ struct Cell : GameObject
         hp = maxHp;
     }
 
+    void ApplyInvincibility()
+    {
+        if (invincibilityFrames > 0 && !pause)
+        {
+            damage = 0;
+            invincibilityFrames--;
+            if (invincibilityFrames == 0)
+                currentSprite = sprite[0];
+            else if (currentSprite != sprite.back())
+                currentSprite = sprite.back();
+        }
+    }
+
     void SetKnockback(int _knockbackFrames, int _knockbackAngle)
     {
         knockbackFrames = _knockbackFrames;
@@ -179,19 +192,7 @@ struct Cell : GameObject
         }
         return 0;
     }
-
-    void ApplyInvincibility()
-    {
-        if (invincibilityFrames > 0 && !pause)
-        {
-            damage = 0;
-            invincibilityFrames--;
-            if (invincibilityFrames == 0)
-                currentSprite = sprite[0];
-            else if (currentSprite != sprite.back())
-                currentSprite = sprite.back();
-        }
-    }
+    
     void ApplyDamage()
     {
         if (damage > 0 && !pause)

@@ -19,3 +19,4 @@
 #include "cellFunctions.hpp"
 #include "collisions.hpp"
 #include "drawing.hpp"
+#include "mainFunctions.hpp"

@@ -10,65 +10,6 @@ void Equip(Cell& cell, int _part, int _slot)
     cell.equipment[_slot].slot = _slot;
 }
 
-void SetupVariables()
-{
-    //setup variables
-    doubleMovementKeys = 0, playerEP = 3, targetEquipment = -1, targetSlot = -1;
-
-    //setup margins
-    cellMargin[0] = { Pixels(13), Pixels(-.5) };
-    cellMargin[1] = { Pixels(-1.5), Pixels(9) };
-    cellMargin[2] = { Pixels(-13), Pixels(-.5) };
-    cellMargin[3] = { Pixels(-1.5), Pixels(-9) };
-
-    //setup enemies
-    for (int i = 0; i < enemies; i++)
-    {
-        enemy[i].Setup(prefabEnemy[0], i);
-        enemy[i].currentSprite = enemy[i].sprite[0];
-    }
-    enemy[0].pos = { CENTER.x + Pixels(60), CENTER.y };
-    enemy[1].pos = { CENTER.x, CENTER.y + Pixels(60) };
-    enemy[2].pos = { CENTER.x - Pixels(60), CENTER.y };
-    enemy[3].pos = { CENTER.x, CENTER.y - Pixels(60) };
-
-    //setup food
-    for (int i = 0; i < foods; i++)
-        food[i].eaten = 0;
-    food[0].pos = { CENTER.x + Pixels(30), CENTER.y + Pixels(30) };
-    food[1].pos = { CENTER.x + Pixels(30), CENTER.y - Pixels(30) };
-    food[2].pos = { CENTER.x - Pixels(30), CENTER.y + Pixels(30) };
-    food[3].pos = { CENTER.x - Pixels(30), CENTER.y - Pixels(30) };
-
-    //setup player
-    player.pos = CENTER;
-    player.rotation = 0;
-    player.speed = Pixels(1);
-
-    player.knockbackFrames = 0;
-    player.invincibilityFrames = 0;
-
-    player.UpdateSprite(&playerSprite[0]);
-    player.UpdateSprite(&playerSprite[1], 1);
-    player.UpdateSprite(&whiteCellSprite, 2);
-    player.currentSprite = player.sprite[0];
-
-    //setup misc.
-    camera = { CENTER, player.pos, 0, 1.0f };
-
-    //clear vectors
-    cannonBalls.clear();
-    enemyOnScreen.clear();
-
-    //debug
-    for (int i = 0; i < slots; i++)
-        Equip(player, 0, i);
-
-    for (int i = 0; i < enemies; i++)
-        for (int j = 0; j < slots; j++)
-            Equip(enemy[i], 0, j);
-}
-
 void MoveInOneDirection(KeyboardKey targetKey, KeyboardKey avoidKey, int index)
 {
     if (IsKeyDown(targetKey))
