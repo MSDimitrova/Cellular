@@ -21,36 +21,8 @@ void DrawCell(Cell& cell)
     for (int i = 0; i < 4; i++)
         if (cell.equipment[i].name != "none")
         {
-            cell.equipment[i].UpdatePos(cell, cell.rotationIndex);
+            cell.equipment[i].UpdatePos(cell);
             DrawGameObject(cell.equipment[i]);
         }
     DrawGameObject(cell);
-}
-void UpdateScreen(Color bg)
-{
-    BeginDrawing();
-    ClearBackground(bg);
-    DrawFPS(10, 10);
-
-    BeginMode2D(camera);
-    //DrawTexture(background, CENTER.x - background.width / 2, CENTER.y - background.height / 2, RAYWHITE);
-    DrawCircle(CENTER.x, CENTER.y, 5, RED);
-
-    for (int i = 0; i < enemyOnScreen.size(); i++)
-        DrawCell(*enemyOnScreen[i]);
-    for (int i = 0; i < canonBalls.size(); i++)
-        DrawGameObject(canonBalls[i]);
-    DrawCell(player);
-
-    EndMode2D();
-    EndDrawing();
-
-    if (!pause)
-    {
-        //player rotation
-        player.rotation = atan2(GetScreenToWorld2D(GetMousePosition(), camera).y - player.pos.y,
-            GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * toDegrees;
-        if (player.rotation < 0)
-            player.rotation += 360;
-    }
 }

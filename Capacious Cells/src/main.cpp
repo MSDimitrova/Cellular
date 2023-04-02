@@ -30,9 +30,13 @@ int main()
     enemyCellSprite = LoadTexture(Path(assetsFolder, "cells/EnemyCell", pngExtention).string().c_str());
     playerSprite[0] = LoadTexture(Path(assetsFolder, "cells/PlayerCell", pngExtention).string().c_str());
 
+    //Texture2D background = LoadTexture(Path(assetsFolder, "Background", pngExtention).string().c_str());
+    Texture2D deathScreen = LoadTexture(Path(assetsFolder, "DeathScreen", pngExtention).string().c_str());
+    Texture2D darkenedScreen = LoadTexture(Path(assetsFolder, "DarkenedScreen", pngExtention).string().c_str());
+
+        //debug textures
     playerSprite[1] = LoadTexture("../../assets/720p/cells/PlayerCell.png");
     playerSprite[2] = LoadTexture("../../assets/1080p/cells/PlayerCell.png");
-    //background = LoadTexture("../../assets/Background.png");
 
     //setup prefabs
         //parts
@@ -48,11 +52,40 @@ int main()
     while (!WindowShouldClose())
     {
         pause = screen;
+
+        if (screen == 2)
+            SetupVariables();
+
+        //Update screen
+        BeginDrawing();
+        ClearBackground(BLACK);
+        DrawFPS(10, 10);
+        BeginMode2D(camera);
+
+        //DrawTexture(background, CENTER.x, CENTER.y, WHITE);
+        DrawCircle(CENTER.x, CENTER.y, 5, RED);
+
+        for (int i = 0; i < enemyOnScreen.size(); i++)
+            DrawCell(*enemyOnScreen[i]);
+        for (int i = 0; i < cannonBalls.size(); i++)
+            DrawGameObject(cannonBalls[i]);
+        DrawCell(player);
+
         switch (screen)
         {
             case 0: //game screen
             {
-                UpdateScreen(BLACK);
+                EndMode2D();
+                EndDrawing();
+
+                player.rotation = atan2(GetScreenToWorld2D(GetMousePosition(), camera).y - player.pos.y,
+                    GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * toDegrees;
+                if (player.rotation < 0)
+                    player.rotation += 360;
+                //map rotation
+                player.rotationIndex = floor(player.rotation / 45);
+                if (player.rotationIndex < 0)
+                    player.rotationIndex += 8;
 
                 //choosing what to render
                     //setup screen checks
@@ -67,8 +100,7 @@ int main()
                     if (IsOnScreen(enemy[i].pos))
                         enemyOnScreen.push_back(&enemy[i]);
 
-                //kill cells
-                    //kill enemies
+                //kill enemies
                 toErase.clear();
                 for (int i = 0; i < enemyOnScreen.size(); i++)
                     if (enemyOnScreen[i]->hp < 1)
@@ -78,34 +110,33 @@ int main()
                 {
                     tempInt = toErase[i] - i; //DON'T TOUCH!!!
                     enemyOnScreen.erase(enemyOnScreen.begin() + tempInt);
-                    //enemy.erase(enemy.begin() + tempInt);
                 }
 
-                //canon ball actions
+                //cannon ball actions
                 toErase.clear();
-                for (int i = 0; i < canonBalls.size(); i++)
-                    if (IsOnScreen(canonBalls[i].pos))
+                for (int i = 0; i < cannonBalls.size(); i++)
+                    if (IsOnScreen(cannonBalls[i].pos))
                     {
 
-                        canonBalls[i].MoveCanonBall();
-                        if (canonBalls[i].parent)
+                        cannonBalls[i].MoveCannonBall();
+                        if (cannonBalls[i].parent)
                         {
-                            if (CanonBallCollision(player, canonBalls[i]))
+                            if (CannonBallCollision(player, cannonBalls[i]))
                                 toErase.push_back(i);
                         }
                         else
                             for (int j = 0; j < enemyOnScreen.size(); j++)
-                                if (CanonBallCollision(*enemyOnScreen[j], canonBalls[i]))
+                                if (CannonBallCollision(*enemyOnScreen[j], cannonBalls[i]))
                                     toErase.push_back(i);
                     }
                     else
                         toErase.push_back(i);
 
-                    //destroy canon balls
+                    //destroy cannon balls
                 for (int i = 0; i < toErase.size(); i++)
                 {
                     tempInt = toErase[i] - i; //DON'T TOUCH!!!
-                    canonBalls.erase(canonBalls.begin() + tempInt);
+                    cannonBalls.erase(cannonBalls.begin() + tempInt);
                 }
 
                 //enemy actions
@@ -119,8 +150,8 @@ int main()
                         if (enemyOnScreen[i]->equipment[j].name == "spike")
                             SpikeCollision(player, *enemyOnScreen[i], j);
 
-                        if (enemyOnScreen[i]->equipment[j].name == "canon")
-                            TryShootingCanonball(*enemyOnScreen[i], j);
+                        if (enemyOnScreen[i]->equipment[j].name == "cannon")
+                            TryShootingCannonball(*enemyOnScreen[i], j);
                     }
 
                     //effects and damage
@@ -130,16 +161,14 @@ int main()
                 }
 
                 //player actions
-                    //map player's rotating direction
-                player.rotationIndex = floor(player.rotation / 45);
-                if (player.rotationIndex < 0)
-                    player.rotationIndex += 8;
+                    //rotate
+                
 
                     //equipment
                 for (int i = 0; i < 4; i++)
                 {
-                    if (player.equipment[i].name == "canon")
-                        TryShootingCanonball(player, i);
+                    if (player.equipment[i].name == "cannon")
+                        TryShootingCannonball(player, i);
                     if (player.equipment[i].name == "tail")
                         if (IsKeyPressed(KEY_LEFT_SHIFT) && player.cooldownTailFrames == 0 && player.activeTailFrames == 0)
                         {
@@ -202,7 +231,10 @@ int main()
 
                 //game screen listens
                 if (IsKeyPressed(KEY_E))
+                {
+                    wasMousePos = GetMousePosition();
                     screen = 1;
+                }
                 else if (IsKeyPressed(KEY_ESCAPE))
                 {
                     wasMousePos = GetMousePosition();
@@ -215,7 +247,7 @@ int main()
                 else if (IsKeyPressed(KEY_TWO))
                     player.UpdateSprite(&playerSprite[2]);
                 else if (IsKeyPressed(KEY_THREE))
-                    std::cout << player.id << std::endl;
+                    std::cout << std::endl;
 
                 tempPos = GetWorldToScreen2D(player.pos, camera);
                 tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), player.rotation / toDegrees);
@@ -231,7 +263,8 @@ int main()
 
             case 1: //evolve screen
             {
-                UpdateScreen(BLUE);
+                EndMode2D();
+                EndDrawing();
 
                 if (targetEquipment == -1)
                 {
@@ -270,7 +303,7 @@ int main()
                 }
                 else if (IsKeyPressed(KEY_E))
                 {
-                    SetMousePosition(CENTER.x + Pixels(20), CENTER.y);
+                    SetMousePosition(wasMousePos.x, wasMousePos.y);
                     screen = 0;
                 }
             }
@@ -278,8 +311,8 @@ int main()
 
             case 2: //main menu
             {
-                SetupVariables();
-                UpdateScreen(DARKGRAY);
+                EndMode2D();
+                EndDrawing();
 
 
 
@@ -294,7 +327,10 @@ int main()
 
             case 3: //pause screen
             {
-                UpdateScreen(DARKBLUE);
+                DrawTexture(darkenedScreen, GetScreenToWorld2D({ 0,0 }, camera).x, GetScreenToWorld2D({ 0,0 }, camera).y, WHITE);
+
+                EndMode2D();
+                EndDrawing();
 
 
 
@@ -309,7 +345,10 @@ int main()
 
             case 4: //death screen
             {
-                UpdateScreen(GRAY);
+                DrawTexture(deathScreen, GetScreenToWorld2D({ 0,0 }, camera).x, GetScreenToWorld2D({ 0,0 }, camera).y, WHITE);
+
+                EndMode2D();
+                EndDrawing();
 
 
 

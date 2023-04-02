@@ -1,7 +1,8 @@
 {
     "animationFPS": 10,
     "boostType": true,
-    "cost": 3,
-    "boost": 5,
+    "price": 3,
+    "upgradeCost": 1,
+    "boost": 1,
     "name": "bristles"
 }

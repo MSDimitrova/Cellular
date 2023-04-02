@@ -85,7 +85,7 @@ struct Equipment : GameObject
     int boost = 0;
     std::string name = "none"; //determines kind of equipment
 
-    void UpdatePos(GameObject& parent, int rotationIndex)
+    void UpdatePos(GameObject& parent)
     {
         tempRotation = parent.rotation;
         tempV2 = cellMargin[slot];
@@ -114,12 +114,11 @@ struct Equipment : GameObject
 
     void Setup(Prefab& prefab)
     {
-        //assign prefab values to this's values
+        //assign the prefab's values to this equipment's values
         if (prefab.data.contains("animationFPS"))
             animationFPS = prefab.data["animationFPS"];
         if (prefab.data.contains("boostType"))
             boostType = 1;
-        cost = prefab.data["cost"];
         boost = prefab.data["boost"];
         name = prefab.data["name"];
 
@@ -131,7 +130,7 @@ struct Cell : GameObject
 {
     bool activeTail = 0;
     int id = -1;
-    int speed = 0;
+    int speed = Pixels(1);
     int maxHp = initialPlayerHp, hp = maxHp, damage = 0;
     int invincibilityFrames = 0;
     int activeTailFrames = 0, cooldownTailFrames = 0;
@@ -162,9 +161,8 @@ struct Cell : GameObject
     {
         knockbackFrames = _knockbackFrames;
         knockbackAngle = _knockbackAngle;
-        speed = Pixels(4);
+        speed = Pixels(2);
     }
-
     bool ApplyKnockback()
     {
         if (knockbackFrames > 0 && !pause)
@@ -192,7 +190,6 @@ struct Cell : GameObject
                 currentSprite = &whiteCellSprite;
         }
     }
-
     void ApplyDamage()
     {
         if (damage > 0 && !pause)
@@ -206,19 +203,20 @@ struct Cell : GameObject
     int CalculateSpeed()
     {
         for (int i = 0; i < 4; i++)
-            if ((movementIndex = AddIndex(i, 2, -rotationIndex)) && ((equipment[i].name == "bristles") || (equipment[i].name == "tail" && activeTail)))
-                return speed + equipment[i].boost;
+            if (((AddIndex(movementIndex, -rotationIndex) == AddIndex(i * 2, 4)) || (AddIndex(movementIndex, -rotationIndex) == AddIndex(i * 2, 5)))
+               && ((equipment[i].name == "bristles") || (equipment[i].name == "tail" && activeTail)))
+                return speed + Pixels(equipment[i].boost);
         return speed;
     }
 };
 
-struct CanonBall : GameObject
+struct CannonBall : GameObject
 {
     bool parent = 0; //0 - player, 1 - enemy
     int speed = 0;
     int attack = 0;
 
-    void MoveCanonBall()
+    void MoveCannonBall()
     {
         if(!pause)
             pos = HypotenuseCoordinates(pos, speed, rotation);
@@ -230,11 +228,12 @@ struct Food : GameObject
     int type = 0; //attack, speed, evo points or recipe
 };
 
-Prefab canonBallPrefab;
-std::vector<CanonBall> canonBalls;
+Prefab cannonBallPrefab;
+std::vector<CannonBall> cannonBalls;
 
-Prefab spike, canon, bristles, tail;
-Prefab* prefabPart[] = { &spike, &canon, &bristles, &tail, }; //0 - spike, 1 - canon, 2 - bristles, 3 - tail
+Prefab spike, cannon, bristles, tail;
+Prefab* prefabPart[] = { &spike, &cannon, &bristles, &tail, }; //0 - spike, 1 - cannon, 2 - bristles, 3 - tail
+Equipment defaultEquipment;
 
 Prefab prefabEnemy[prefabEnemies];
 std::vector<Cell> enemy(enemies);

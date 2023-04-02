@@ -46,9 +46,6 @@
     <None Include="..\..\prefabs\equipment\bristles.json">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\prefabs\equipment\canon.json">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\prefabs\equipment\spike.json">
       <Filter>Resource Files</Filter>
     </None>
@@ -56,6 +53,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\prefabs\cells\enemy0.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\prefabs\equipment\cannon.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

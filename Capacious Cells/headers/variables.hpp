@@ -42,7 +42,7 @@ float tempRotation;
 Vector2 tempPos, tempV2;
 
 //names
-std::vector<const char*> prefabPartName{ "equipment/spike" , "equipment/canon", "equipment/bristles", "equipment/tail" },
+std::vector<const char*> prefabPartName{ "equipment/spike" , "equipment/cannon", "equipment/bristles", "equipment/tail" },
 	prefabEnemyName{ "cells/enemy0"/* , "cells/enemy1", "cells/enemy2", "cells/enemy3"*/ };
 
 //misc.

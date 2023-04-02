@@ -1,5 +1,6 @@
 {
-	"cost": 3,
+	"price": 3,
+    "upgradeCost": 1,
 	"boost": 50,
 	"name": "spike"
 }

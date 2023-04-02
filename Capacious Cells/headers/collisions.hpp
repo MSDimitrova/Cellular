@@ -3,31 +3,33 @@
 
 void CellLines(GameObject& cell)
 {
-    Vector2 pos = GetWorldToScreen2D(cell.pos, camera);
-    cellPoint[0] = HypotenuseCoordinates(pos, cell.size.x / 2, cell.rotation / toDegrees);
-    cellPoint[1] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation + 55) / toDegrees);
-    cellPoint[2] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation + 135) / toDegrees);
-    cellPoint[3] = HypotenuseCoordinates(pos, cell.size.x / 2, (cell.rotation + 180) / toDegrees);
-    cellPoint[4] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation - 135) / toDegrees);
-    cellPoint[5] = HypotenuseCoordinates(pos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation - 55) / toDegrees);
+    tempPos = GetWorldToScreen2D(cell.pos, camera);
+    cellPoint[0] = HypotenuseCoordinates(tempPos, cell.size.x / 2, cell.rotation / toDegrees);
+    cellPoint[1] = HypotenuseCoordinates(tempPos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation + 55) / toDegrees);
+    cellPoint[2] = HypotenuseCoordinates(tempPos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation + 135) / toDegrees);
+    cellPoint[3] = HypotenuseCoordinates(tempPos, cell.size.x / 2, (cell.rotation + 180) / toDegrees);
+    cellPoint[4] = HypotenuseCoordinates(tempPos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(9)), (cell.rotation - 135) / toDegrees);
+    cellPoint[5] = HypotenuseCoordinates(tempPos, HypotenuseLength((cell.size.y / 2) - Pixels(2), Pixels(5)), (cell.rotation - 55) / toDegrees);
 }
 void SpikeLines(Equipment& spike)
 {
-    Vector2 pos = GetWorldToScreen2D(spike.pos, camera);
-    spikePoint[0] = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation - 90) / toDegrees);
-    spikePoint[1] = HypotenuseCoordinates(pos, spike.size.x, spike.rotation / toDegrees);
-    spikePoint[2] = HypotenuseCoordinates(pos, spike.size.y / 2, (spike.rotation + 90) / toDegrees);
+    tempPos = HypotenuseCoordinates(spike.pos, Pixels(2), (spike.rotation - 180) / toDegrees);
+    tempPos = GetWorldToScreen2D(tempPos, camera);
+
+    spikePoint[0] = HypotenuseCoordinates(tempPos, spike.size.y / 2, (spike.rotation - 90) / toDegrees);
+    spikePoint[1] = HypotenuseCoordinates(tempPos, spike.size.x + Pixels(2), spike.rotation / toDegrees);
+    spikePoint[2] = HypotenuseCoordinates(tempPos, spike.size.y / 2, (spike.rotation + 90) / toDegrees);
 
     /*DrawLine(spikePoint[0].x, spikePoint[0].y, spikePoint[1].x, spikePoint[1].y, RED);
     DrawLine(spikePoint[1].x, spikePoint[1].y, spikePoint[2].x, spikePoint[2].y, RED);*/
 }
-void CanonBallLines(GameObject& ball)
+void CannonBallLines(GameObject& ball)
 {
-    Vector2 pos = GetWorldToScreen2D(ball.pos, camera);
-    ballPoint[0] = { pos.x + ball.size.x, pos.y };
-    ballPoint[1] = { pos.x, pos.y + ball.size.y };
-    ballPoint[2] = { pos.x - ball.size.x, pos.y };
-    ballPoint[3] = { pos.x, pos.y - ball.size.y };
+    tempPos = GetWorldToScreen2D(ball.pos, camera);
+    ballPoint[0] = { tempPos.x + ball.size.x, tempPos.y };
+    ballPoint[1] = { tempPos.x, tempPos.y + ball.size.y };
+    ballPoint[2] = { tempPos.x - ball.size.x, tempPos.y };
+    ballPoint[3] = { tempPos.x, tempPos.y - ball.size.y };
 
     /*DrawLine(ballPoint[0].x, ballPoint[0].y, ballPoint[1].x, ballPoint[1].y, RED);
     DrawLine(ballPoint[1].x, ballPoint[1].y, ballPoint[2].x, ballPoint[2].y, RED);
@@ -62,11 +64,12 @@ void SpikeCollision(Cell& attacked, Cell& attacker, int spikeSlot)
         {
             attacked.damage += attacker.equipment[spikeSlot].boost;
             attacked.SetKnockback(16, AddRotation(attacker.rotation, directionRotation[spikeSlot * 2]) / toDegrees);
+            attacker.SetKnockback(16, AddRotation(attacker.rotation, 180, directionRotation[spikeSlot * 2]) / toDegrees);
         }
 }
-bool CanonBallCollision(Cell& attacked, CanonBall& ball)
+bool CannonBallCollision(Cell& attacked, CannonBall& ball)
 {
-    CanonBallLines(ball);
+    CannonBallLines(ball);
 
     //check collision for all of the ball's lines and load damage
     for (int i = 0; i < 3; i++)
