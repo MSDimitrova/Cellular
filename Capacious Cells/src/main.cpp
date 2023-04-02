@@ -87,6 +87,8 @@ int main()
             DrawCell(*enemyOnScreen[i]);
         for (int i = 0; i < cannonBalls.size(); i++)
             DrawGameObject(cannonBalls[i]);
+        for (int i = 0; i < foodOnScreen.size(); i++)
+            DrawGameObject(*foodOnScreen[i]);
         DrawCell(player);
 
         switch (screen)
@@ -221,7 +223,16 @@ int main()
                 player.ApplyInvincibility();
                 if (player.ApplyKnockback())
                     movementControls = 0;
+                if (hunger && foodOnScreen.size() > 0)
+                {
+                    tempPos = { player.pos.x - player.size.x / 2, player.pos.y - player.size.y / 2 };
+                    tempV2 = { player.pos.x + player.size.x / 2, player.pos.y + player.size.y / 2 };
+                    for (int i = 0; i < foodOnScreen.size(); i++)
+                        foodOnScreen[i]->TryToGetEaten();
+                }
                 player.ApplyDamage();
+                if(heal > 0)
+                    ApplyHeal();
 
                     //movement
                 if (movementControls)

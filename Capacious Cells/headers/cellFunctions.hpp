@@ -62,7 +62,7 @@ void SetupVariables()
 
     //debug
     for (int i = 0; i < slots; i++)
-        Equip(player, 1, i);
+        Equip(player, 0, i);
 
     for (int i = 0; i < enemies; i++)
         for (int j = 0; j < slots; j++)
@@ -105,4 +105,12 @@ void TryShootingCannonball(Cell& cell, int cannonSlot)
         ball.attack = cell.equipment[cannonSlot].boost;
         cannonBalls.push_back(ball);
     }
+}
+
+void ApplyHeal()
+{
+    player.hp += heal;
+    if (player.hp > player.maxHp)
+        player.hp = player.maxHp;
+    heal = 0;
 }

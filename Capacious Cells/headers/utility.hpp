@@ -5,6 +5,12 @@ using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 //screen related
+bool IsOnScreen(Vector2 pos)
+{
+    if (pos.x > screenCheck[2].x && pos.y > screenCheck[2].y && pos.x < screenCheck[0].x && pos.y < screenCheck[0].y)
+        return 1;
+    return 0;
+}
 float Pixels(float pixels, bool opposite = false)
 {
     if(opposite)

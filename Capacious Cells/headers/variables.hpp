@@ -50,6 +50,7 @@ std::vector<const char*> prefabPartName{ "equipment/spike" , "equipment/cannon",
 
 //player related
 bool pause, movementControls = 1, hunger = 0;
+int heal = 0;
 
 //misc.
 int inGameFrames = 0;

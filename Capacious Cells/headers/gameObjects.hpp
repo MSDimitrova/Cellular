@@ -197,7 +197,11 @@ struct Cell : GameObject
         if (damage > 0 && !pause)
         {
             if (id == -1 && hunger)
+            {
                 damage *= 2;
+                hunger = 0;
+            }
+                
             hp -= damage;
             invincibilityFrames = 19;
             damage = 0;
@@ -254,6 +258,15 @@ struct Food : GameObject
 {
     bool eaten = 0;
     int type = 0; //attack, speed, evo points or recipe
+
+    void TryToGetEaten()
+    {
+        if (pos.x > tempPos.x && pos.y > tempPos.y && pos.x < tempV2.x && pos.y < tempV2.y)
+        {
+            heal += 30;
+            eaten = 1;
+        }
+    }
 };
 
 std::vector<CannonBall> cannonBalls;
