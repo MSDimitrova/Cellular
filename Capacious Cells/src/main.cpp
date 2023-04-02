@@ -5,7 +5,7 @@ int main()
     //setup window
     InitWindow(1280, 720, "Capacious Cells");
 
-    //size
+        //size
     const Vector2 monitorSize = { GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()) };
     if (monitorSize.x >= 1920 && monitorSize.y >= 1080)
     {
@@ -14,13 +14,13 @@ int main()
     }
     SetWindowSize(windowSize.x, windowSize.y);
 
-    //position
+        //position
     CENTER = { { windowSize.x / 2 }, { windowSize.y / 2 } };
     SetWindowPosition(monitorSize.x / 2 - CENTER.x, monitorSize.y / 2 - CENTER.y);
     if ((monitorSize.x == 1280 && monitorSize.y == 720) || (monitorSize.x == 1920 && monitorSize.y == 1080))
         SetWindowState(FLAG_FULLSCREEN_MODE);
 
-    //other
+        //other
     SetTargetFPS(60);
     SetExitKey(KEY_END);
 
@@ -252,7 +252,7 @@ int main()
                 else if (IsKeyPressed(KEY_TWO))
                     player.UpdateSprite(&playerSprite[2]);
                 else if (IsKeyPressed(KEY_THREE))
-                    std::cout << std::endl;
+                    std::cout << player.hpText << std::endl;
 
                 tempPos = GetWorldToScreen2D(player.pos, camera);
                 tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), player.rotation / toDegrees);

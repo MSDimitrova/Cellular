@@ -135,13 +135,15 @@ struct Cell : GameObject
     bool activeTail = 0;
     int id = -1;
     int speed = Pixels(1);
-    int maxHp = initialPlayerHp, hp = maxHp, damage = 0;
     int invincibilityFrames = 0;
     int activeTailFrames = 0, cooldownTailFrames = 0;
     int movementIndex = -1, rotationIndex = -1;
 
     int knockbackFrames = 0;
     float knockbackAngle = 0;
+
+    int maxHp = initialPlayerHp, hp = maxHp, damage = 0;
+    std::string hpText;
 
     Equipment equipment[slots];
 
@@ -211,6 +213,29 @@ struct Cell : GameObject
                && ((equipment[i].name == "bristles") || (equipment[i].name == "tail" && activeTail)))
                 return speed + Pixels(equipment[i].boost);
         return speed;
+    }
+
+    void DrawHp(bool update = 1)
+    {
+        hpText = "";
+        if (update)
+        {
+            hpText = std::to_string(hp) + "/" + std::to_string(maxHp) + " HP";
+            if (hp > 150)
+                tempColor = BLUE;
+            else if (hp > 100)
+                tempColor = GREEN;
+            else if (hp > 50)
+                tempColor = ORANGE;
+            else if (hp > 0)
+                tempColor = RED;
+        }
+        else
+        {
+            hpText = "0/" + std::to_string(maxHp) + " HP";
+            tempColor = RED;
+        }
+        DrawText(hpText.c_str(), pos.x - Pixels(hpText.size()), pos.y - Pixels(20), Pixels(5), tempColor);
     }
 };
 

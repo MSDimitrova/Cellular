@@ -25,4 +25,8 @@ void DrawCell(Cell& cell)
             DrawGameObject(cell.equipment[i]);
         }
     DrawGameObject(cell);
+    if(cell.id == -1 && screen == 4)
+        cell.DrawHp(0);
+    else
+        cell.DrawHp();
 }

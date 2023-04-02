@@ -13,6 +13,12 @@ const char* dummyConstCharPtr;
 Vector2 dummyVector2;
 Texture2D dummyTexture;
 
+//temporaries
+int tempInt;
+float tempRotation;
+Vector2 tempPos, tempV2;
+Color tempColor;
+
 //path parts
 const char* pngExtention = ".png";
 const char* jsonExtention = ".json";
@@ -35,11 +41,6 @@ Texture2D missingTexture, whiteCellSprite, enemyCellSprite, playerSprite[3];
 
 //objects
 Camera2D camera;
-
-//temporaries
-int tempInt;
-float tempRotation;
-Vector2 tempPos, tempV2;
 
 //names
 std::vector<const char*> prefabPartName{ "equipment/spike" , "equipment/cannon", "equipment/bristles", "equipment/tail" , "equipment/toxin" },
