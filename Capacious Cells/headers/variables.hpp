@@ -46,8 +46,10 @@ Camera2D camera;
 std::vector<const char*> prefabPartName{ "equipment/spike" , "equipment/cannon", "equipment/bristles", "equipment/tail" , "equipment/toxin" },
 	prefabEnemyName{ "cells/enemy0"/* , "cells/enemy1", "cells/enemy2", "cells/enemy3"*/ };
 
+//player related
+bool pause, movementControls = 1, hunger = 0;
+
 //misc.
-bool pause, movementControls = 1;
 int inGameFrames = 0;
 std::vector<int> toErase;
 Vector2 screenCheck[4];

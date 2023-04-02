@@ -20,8 +20,8 @@ void SpikeLines(GameObject& spike)
     spikePoint[1] = HypotenuseCoordinates(tempPos, spike.size.x + Pixels(2), spike.rotation / toDegrees);
     spikePoint[2] = HypotenuseCoordinates(tempPos, spike.size.y / 2, (spike.rotation + 90) / toDegrees);
 
-    DrawLine(spikePoint[0].x, spikePoint[0].y, spikePoint[1].x, spikePoint[1].y, RED);
-    DrawLine(spikePoint[1].x, spikePoint[1].y, spikePoint[2].x, spikePoint[2].y, RED);
+    /*DrawLine(spikePoint[0].x, spikePoint[0].y, spikePoint[1].x, spikePoint[1].y, RED);
+    DrawLine(spikePoint[1].x, spikePoint[1].y, spikePoint[2].x, spikePoint[2].y, RED);*/
 }
 void CannonBallLines(GameObject& ball)
 {
@@ -40,20 +40,15 @@ void ToxinLines(GameObject& toxin)
 {
     tempPos = HypotenuseCoordinates(toxin.pos, Pixels(4), toxin.rotation / toDegrees);
     tempPos = GetWorldToScreen2D(toxin.pos, camera);
-
-    /*toxinPoint[0] = { tempPos.x + toxin.size.x, tempPos.y };
-    toxinPoint[1] = HypotenuseCoordinates(tempPos, toxin.size.y / 2, (toxin.rotation + 90) / toDegrees);
-    toxinPoint[2] = HypotenuseCoordinates(tempPos, toxin.size.y / 2, (toxin.rotation - 90) / toDegrees);
-    toxinPoint[3] = { tempPos.x, tempPos.y - toxin.size.y };*/
     for (int i = 0; i < 4; i++)
     {
         toxinPoint[i] = HypotenuseCoordinates(tempPos, HypotenuseLength(toxin.size.x, toxin.size.y) / 2, (toxin.rotation + directionRotation[i * 2] + 45) / toDegrees);
     }
 
-    DrawLine(toxinPoint[0].x, toxinPoint[0].y, toxinPoint[1].x, toxinPoint[1].y, RED);
+    /*DrawLine(toxinPoint[0].x, toxinPoint[0].y, toxinPoint[1].x, toxinPoint[1].y, RED);
     DrawLine(toxinPoint[1].x, toxinPoint[1].y, toxinPoint[2].x, toxinPoint[2].y, RED);
     DrawLine(toxinPoint[2].x, toxinPoint[2].y, toxinPoint[3].x, toxinPoint[3].y, RED);
-    DrawLine(toxinPoint[3].x, toxinPoint[3].y, toxinPoint[0].x, toxinPoint[0].y, RED);
+    DrawLine(toxinPoint[3].x, toxinPoint[3].y, toxinPoint[0].x, toxinPoint[0].y, RED);*/
 }
 
 bool LineCellCollision(GameObject& cell, Vector2 point1, Vector2 point2)
@@ -63,11 +58,11 @@ bool LineCellCollision(GameObject& cell, Vector2 point1, Vector2 point2)
     //cycle collision checks between cell's lines and given line
     for (int i = 0; i < 5; i++)
     {
-        DrawLine(cellPoint[i].x, cellPoint[i].y, cellPoint[i + 1].x, cellPoint[i + 1].y, BLUE);
+        //DrawLine(cellPoint[i].x, cellPoint[i].y, cellPoint[i + 1].x, cellPoint[i + 1].y, BLUE);
         if (CheckCollisionLines(point1, point2, cellPoint[i], cellPoint[i + 1], &dummyVector2))
             return 1;
     }
-    DrawLine(cellPoint[5].x, cellPoint[5].y, cellPoint[0].x, cellPoint[0].y, BLUE);
+    //DrawLine(cellPoint[5].x, cellPoint[5].y, cellPoint[0].x, cellPoint[0].y, BLUE);
 
     if (CheckCollisionLines(point1, point2, cellPoint[5], cellPoint[0], &dummyVector2))
         return 1;

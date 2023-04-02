@@ -42,6 +42,8 @@ void SetupVariables()
     player.invincibilityFrames = 0;
 
     player.UpdateSprite(&playerSprite[0]);
+    player.UpdateSprite(&playerSprite[1], 1);
+    player.currentSprite = player.sprite[0];
 
     //setup misc.
     camera = { CENTER, player.pos, 0, 1.0f };

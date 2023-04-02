@@ -7,9 +7,9 @@ bool IsOnScreen(Vector2 pos)
         return 1;
     return 0;
 }
-void DrawGameObject(GameObject& gameObject)
+void DrawGameObject(GameObject& gameObject, bool player = 0)
 {
-    if (!pause && gameObject.sprite.size() > 1)
+    if (!pause && gameObject.sprite.size() > 1 && !player)
         gameObject.Animate();
 
     DrawTexturePro(*gameObject.currentSprite, Rectangle{ 0, 0, gameObject.size.x, gameObject.size.y },
@@ -18,13 +18,21 @@ void DrawGameObject(GameObject& gameObject)
 }
 void DrawCell(Cell& cell)
 {
+    //draw equipment
     for (int i = 0; i < slots; i++)
         if (cell.equipment[i].name != "none")
         {
             cell.equipment[i].UpdatePos(cell);
             DrawGameObject(cell.equipment[i]);
         }
-    DrawGameObject(cell);
+
+    //draw cell
+    if(cell.id == -1)
+        DrawGameObject(cell, 1);
+    else
+        DrawGameObject(cell);
+
+    //draw hp
     if(cell.id == -1 && screen == 4)
         cell.DrawHp(0);
     else

@@ -29,14 +29,14 @@ int main()
     whiteCellSprite = LoadTexture(Path(assetsFolder, "cells/WhiteCell", pngExtention).string().c_str());
     enemyCellSprite = LoadTexture(Path(assetsFolder, "cells/EnemyCell", pngExtention).string().c_str());
     playerSprite[0] = LoadTexture(Path(assetsFolder, "cells/PlayerCell", pngExtention).string().c_str());
+    playerSprite[1] = LoadTexture(Path(assetsFolder, "cells/HungryPlayerCell", pngExtention).string().c_str());
 
     //Texture2D background = LoadTexture(Path(assetsFolder, "Background", pngExtention).string().c_str());
     Texture2D deathScreen = LoadTexture(Path(assetsFolder, "DeathScreen", pngExtention).string().c_str());
     Texture2D darkenedScreen = LoadTexture(Path(assetsFolder, "DarkenedScreen", pngExtention).string().c_str());
 
         //debug textures
-    playerSprite[1] = LoadTexture("../../assets/720p/cells/PlayerCell.png");
-    playerSprite[2] = LoadTexture("../../assets/1080p/cells/PlayerCell.png");
+    playerSprite[2] = LoadTexture("../../assets/720p/cells/PlayerCell.png");
 
     //setup prefabs
         //parts
@@ -166,9 +166,6 @@ int main()
                 }
 
                 //player actions
-                    //rotate
-                
-
                     //equipment
                 for (int i = 0; i < 4; i++)
                 {
@@ -207,6 +204,13 @@ int main()
                         MoveInOneDirection(KEY_A, KEY_D, 4);
                         MoveInOneDirection(KEY_W, KEY_S, 6);
                     }
+                }
+
+                    //hunger
+                if (IsKeyPressed(KEY_Q))
+                {
+                    hunger = !hunger;
+                    player.currentSprite = player.sprite[hunger];
                 }
 
                 //variable sets and resets

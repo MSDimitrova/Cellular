@@ -200,6 +200,8 @@ struct Cell : GameObject
     {
         if (damage > 0 && !pause)
         {
+            if (id == -1 && hunger)
+                damage *= 2;
             hp -= damage;
             invincibilityFrames = 19;
             damage = 0;
