@@ -151,16 +151,12 @@ struct Cell : GameObject
     {
         if (_id != -1)
             id = _id;
-        pos.x = CENTER.x + enemyPos[id].x;
-        pos.y = CENTER.y + enemyPos[id].y;
 
         //assign prefab values to this's values
         speed = prefab.data["speed"];
         id = prefab.data["id"];
         maxHp = prefab.data["maxHp"];
         hp = maxHp;
-
-        UpdateAnimation(prefab);
     }
 
     void SetKnockback(int _knockbackFrames, int _knockbackAngle)
@@ -192,8 +188,8 @@ struct Cell : GameObject
             invincibilityFrames--;
             if (invincibilityFrames == 0)
                 currentSprite = sprite[0];
-            else if (currentSprite != &whiteCellSprite)
-                currentSprite = &whiteCellSprite;
+            else if (currentSprite != sprite.back())
+                currentSprite = sprite.back();
         }
     }
     void ApplyDamage()
@@ -256,11 +252,13 @@ struct CannonBall : GameObject
 
 struct Food : GameObject
 {
+    bool eaten = 0;
     int type = 0; //attack, speed, evo points or recipe
 };
 
-Prefab cannonBallPrefab;
 std::vector<CannonBall> cannonBalls;
+std::vector<Food> food(foods);
+std::vector<Food*> foodOnScreen;
 
 Prefab spike, cannon, bristles, tail, toxin;
 Prefab* prefabPart[parts] = { &spike, &cannon, &bristles, &tail, &toxin}; //0 - spike, 1 - cannon, 2 - bristles, 3 - tail, 4 - toxin

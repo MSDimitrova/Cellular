@@ -22,16 +22,23 @@ void SetupVariables()
     cellMargin[3] = { Pixels(-1.5), Pixels(-9) };
 
     //setup enemies
-    enemyPos[0] = { Pixels(60), 0 };
-    enemyPos[1] = { 0, Pixels(60) };
-    enemyPos[2] = { Pixels(-60), 0 };
-    enemyPos[3] = { 0, Pixels(-60) };
-
     for (int i = 0; i < enemies; i++)
     {
         enemy[i].Setup(prefabEnemy[0], i);
-        enemy[i].UpdateSprite(&enemyCellSprite);
+        enemy[i].currentSprite = enemy[i].sprite[0];
     }
+    enemy[0].pos = { CENTER.x + Pixels(60), CENTER.y };
+    enemy[1].pos = { CENTER.x, CENTER.y + Pixels(60) };
+    enemy[2].pos = { CENTER.x - Pixels(60), CENTER.y };
+    enemy[3].pos = { CENTER.x, CENTER.y - Pixels(60) };
+
+    //setup food
+    for (int i = 0; i < foods; i++)
+        food[i].eaten = 0;
+    food[0].pos = { CENTER.x + Pixels(30), CENTER.y + Pixels(30) };
+    food[1].pos = { CENTER.x + Pixels(30), CENTER.y - Pixels(30) };
+    food[2].pos = { CENTER.x - Pixels(30), CENTER.y + Pixels(30) };
+    food[3].pos = { CENTER.x - Pixels(30), CENTER.y - Pixels(30) };
 
     //setup player
     player.pos = CENTER;
@@ -43,11 +50,11 @@ void SetupVariables()
 
     player.UpdateSprite(&playerSprite[0]);
     player.UpdateSprite(&playerSprite[1], 1);
+    player.UpdateSprite(&whiteCellSprite, 2);
     player.currentSprite = player.sprite[0];
 
     //setup misc.
     camera = { CENTER, player.pos, 0, 1.0f };
-    cannonBallPrefab.Setup("cannonBall");
 
     //clear vectors
     cannonBalls.clear();
@@ -55,7 +62,7 @@ void SetupVariables()
 
     //debug
     for (int i = 0; i < slots; i++)
-        Equip(player, 4, i);
+        Equip(player, 1, i);
 
     for (int i = 0; i < enemies; i++)
         for (int j = 0; j < slots; j++)
@@ -92,7 +99,7 @@ void TryShootingCannonball(Cell& cell, int cannonSlot)
         ball.rotation = AddRotation(cell.rotation, directionRotation[cannonSlot * 2]) / toDegrees;
         ball.pos = HypotenuseCoordinates(cell.equipment[cannonSlot].pos, Pixels(5), ball.rotation);
         ball.speed = Pixels(3);
-        ball.UpdateSprite(&cannonBallPrefab.sprite[0]);
+        ball.UpdateSprite(&cannonBallSprite);
         if (cell.id != -1) //check if the player is the parent (only cell which's id doesn't change (the default is -1))
             ball.parent = 1;
         ball.attack = cell.equipment[cannonSlot].boost;

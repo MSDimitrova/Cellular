@@ -25,17 +25,23 @@ int main()
     SetExitKey(KEY_END);
 
     //load textures
-    missingTexture = LoadTexture("../../assets/MissingTexture.png");
+        //cells
     whiteCellSprite = LoadTexture(Path(assetsFolder, "cells/WhiteCell", pngExtention).string().c_str());
     enemyCellSprite = LoadTexture(Path(assetsFolder, "cells/EnemyCell", pngExtention).string().c_str());
     playerSprite[0] = LoadTexture(Path(assetsFolder, "cells/PlayerCell", pngExtention).string().c_str());
     playerSprite[1] = LoadTexture(Path(assetsFolder, "cells/HungryPlayerCell", pngExtention).string().c_str());
 
-    //Texture2D background = LoadTexture(Path(assetsFolder, "Background", pngExtention).string().c_str());
-    Texture2D deathScreen = LoadTexture(Path(assetsFolder, "DeathScreen", pngExtention).string().c_str());
-    Texture2D darkenedScreen = LoadTexture(Path(assetsFolder, "DarkenedScreen", pngExtention).string().c_str());
+        //backgrounds
+    //Texture2D background = LoadTexture(Path(assetsFolder, "screens/Background", pngExtention).string().c_str());
+    Texture2D deathScreen = LoadTexture(Path(assetsFolder, "screens/DeathScreen", pngExtention).string().c_str());
+    Texture2D darkenedScreen = LoadTexture(Path(assetsFolder, "screens/DarkenedScreen", pngExtention).string().c_str());
 
-        //debug textures
+        //balls
+    cannonBallSprite = LoadTexture(Path(assetsFolder, "balls/CannonBall", pngExtention).string().c_str());
+    foodSprite = LoadTexture(Path(assetsFolder, "balls/Food", pngExtention).string().c_str());
+
+        //debug
+    missingTexture = LoadTexture("../../assets/MissingTexture.png");
     playerSprite[2] = LoadTexture("../../assets/720p/cells/PlayerCell.png");
 
     //setup prefabs
@@ -47,14 +53,26 @@ int main()
     for (int i = 0; i < prefabEnemies; i++)
         prefabEnemy[i].Setup(prefabEnemyName[i]);
 
+    //setup sprites
+        //food
+    for (int i = 0; i < foods; i++)
+        food[i].UpdateSprite(&foodSprite);
+
+        //enemies
+    for (int i = 0; i < enemies; i++)
+    {
+        enemy[i].UpdateSprite(&enemyCellSprite);
+        enemy[i].UpdateSprite(&whiteCellSprite, 1);
+    }
+
+    //prepare game
     screen = 2;
+    SetupVariables();
+
     //start game runtime
     while (!WindowShouldClose())
     {
         pause = screen;
-
-        if (screen == 2)
-            SetupVariables();
 
         //Update screen
         BeginDrawing();
@@ -78,15 +96,6 @@ int main()
                 EndMode2D();
                 EndDrawing();
 
-                player.rotation = atan2(GetScreenToWorld2D(GetMousePosition(), camera).y - player.pos.y,
-                    GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * toDegrees;
-                if (player.rotation < 0)
-                    player.rotation += 360;
-                //map rotation
-                player.rotationIndex = floor(player.rotation / 45);
-                if (player.rotationIndex < 0)
-                    player.rotationIndex += 8;
-
                 //choosing what to render
                     //setup screen checks
                 screenCheck[0] = GetScreenToWorld2D({ windowSize.x + Pixels(20), windowSize.y + Pixels(20) }, camera);
@@ -94,11 +103,17 @@ int main()
                 screenCheck[2] = GetScreenToWorld2D({ Pixels(-20), Pixels(-20) }, camera);
                 screenCheck[3] = GetScreenToWorld2D({ windowSize.x + Pixels(20), Pixels(-20) }, camera);
 
-                //sort enemies
+                    //sort enemies
                 enemyOnScreen.clear();
                 for (int i = 0; i < enemies; i++)
                     if (IsOnScreen(enemy[i].pos))
                         enemyOnScreen.push_back(&enemy[i]);
+
+                    //sort food
+                foodOnScreen.clear();
+                for (int i = 0; i < foods; i++)
+                    if (IsOnScreen(food[i].pos))
+                        foodOnScreen.push_back(&food[i]);
 
                 //kill enemies
                 toErase.clear();
@@ -110,6 +125,18 @@ int main()
                 {
                     tempInt = toErase[i] - i; //DON'T TOUCH!!!
                     enemyOnScreen.erase(enemyOnScreen.begin() + tempInt);
+                }
+
+                //kill food
+                toErase.clear();
+                for (int i = 0; i < foodOnScreen.size(); i++)
+                    if (foodOnScreen[i]->eaten == 1)
+                        toErase.push_back(i);
+
+                for (int i = 0; i < toErase.size(); i++)
+                {
+                    tempInt = toErase[i] - i; //DON'T TOUCH!!!
+                    foodOnScreen.erase(foodOnScreen.begin() + tempInt);
                 }
 
                 //cannon ball actions
@@ -166,6 +193,17 @@ int main()
                 }
 
                 //player actions
+                    //rotate
+                player.rotation = atan2(GetScreenToWorld2D(GetMousePosition(), camera).y - player.pos.y,
+                    GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * toDegrees;
+                if (player.rotation < 0)
+                    player.rotation += 360;
+
+                    //map rotation
+                player.rotationIndex = floor(player.rotation / 45);
+                if (player.rotationIndex < 0)
+                    player.rotationIndex += 8;
+
                     //equipment
                 for (int i = 0; i < 4; i++)
                 {
@@ -365,7 +403,10 @@ int main()
 
                 //game screen listens
                 if (IsKeyPressed(KEY_ESCAPE))
+                {
+                    SetupVariables();
                     screen = 2;
+                }
                 else if (IsKeyPressed(KEY_ENTER))
                 {
                     SetupVariables();

@@ -7,9 +7,9 @@ bool IsOnScreen(Vector2 pos)
         return 1;
     return 0;
 }
-void DrawGameObject(GameObject& gameObject, bool player = 0)
+void DrawGameObject(GameObject& gameObject, bool cell = 0)
 {
-    if (!pause && gameObject.sprite.size() > 1 && !player)
+    if (!pause && gameObject.sprite.size() > 1 && !cell)
         gameObject.Animate();
 
     DrawTexturePro(*gameObject.currentSprite, Rectangle{ 0, 0, gameObject.size.x, gameObject.size.y },
@@ -27,10 +27,7 @@ void DrawCell(Cell& cell)
         }
 
     //draw cell
-    if(cell.id == -1)
-        DrawGameObject(cell, 1);
-    else
-        DrawGameObject(cell);
+    DrawGameObject(cell, 1);
 
     //draw hp
     if(cell.id == -1 && screen == 4)

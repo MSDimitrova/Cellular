@@ -27,17 +27,19 @@ const char* assetsFolder = "../../assets/";
 const char* prefabsFolder = "../../prefabs/";
 
 //constants
-const int enemies = 4, prefabEnemies = 1, initialPlayerHp = 150, parts = 5, slots = 4;
+const int foods = 4, enemies = 4, prefabEnemies = 1, initialPlayerHp = 150, parts = 5, slots = 4;
 const float directionRotation[8] = { 0, 45, 90, 135, 180, 225, 270, 315 };
 const float toDegrees = 57.29578f;
 const Vector2 directionPos[8] = { {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
 
 //constant after first assignment
 bool resolution = 0;
-Vector2 CENTER, windowSize, cellMargin[slots], enemyPos[enemies], margin;
+Vector2 CENTER, windowSize, cellMargin[slots];
 
 //sprites
-Texture2D missingTexture, whiteCellSprite, enemyCellSprite, playerSprite[3];
+Texture2D missingTexture;
+Texture2D whiteCellSprite, enemyCellSprite, playerSprite[3];
+Texture2D cannonBallSprite, foodSprite;
 
 //objects
 Camera2D camera;
