@@ -58,5 +58,8 @@
     <None Include="..\..\prefabs\equipment\cannon.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\prefabs\equipment\toxin.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -150,6 +150,7 @@
     <None Include="..\..\prefabs\equipment\cannon.json" />
     <None Include="..\..\prefabs\equipment\spike.json" />
     <None Include="..\..\prefabs\equipment\tail.json" />
+    <None Include="..\..\prefabs\equipment\toxin.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

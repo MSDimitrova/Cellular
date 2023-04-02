@@ -52,13 +52,12 @@ void SetupVariables()
     enemyOnScreen.clear();
 
     //debug
-    for (int i = 0; i < 4; i++)
-        Equip(player, 0, i);
-    Equip(player, 2, 2);
+    for (int i = 0; i < slots; i++)
+        Equip(player, 4, i);
 
     for (int i = 0; i < enemies; i++)
-        for (int j = 0; j < 4; j++)
-            Equip(enemy[i], 1, j);
+        for (int j = 0; j < slots; j++)
+            Equip(enemy[i], 0, j);
 }
 
 void MoveInOneDirection(KeyboardKey targetKey, KeyboardKey avoidKey, int index)

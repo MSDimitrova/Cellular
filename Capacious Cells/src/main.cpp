@@ -143,7 +143,7 @@ int main()
                 for (int i = 0; i < enemyOnScreen.size(); i++)
                 {
                     //equipment
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < slots; j++)
                     {
                         if (player.equipment[j].name == "spike")
                             SpikeCollision(*enemyOnScreen[i], player, j);
@@ -152,6 +152,11 @@ int main()
 
                         if (enemyOnScreen[i]->equipment[j].name == "cannon")
                             TryShootingCannonball(*enemyOnScreen[i], j);
+
+                        if (player.equipment[j].name == "toxin")
+                            ToxinCollision(*enemyOnScreen[i], player, j);
+                        if (enemyOnScreen[i]->equipment[j].name == "toxin")
+                            ToxinCollision(player, *enemyOnScreen[i], j);
                     }
 
                     //effects and damage
@@ -276,6 +281,8 @@ int main()
                         targetEquipment = 2;
                     else if (IsKeyPressed(KEY_FOUR))
                         targetEquipment = 3;
+                    else if (IsKeyPressed(KEY_FIVE))
+                        targetEquipment = 4;
                 }
                 else if (targetSlot == -1)
                 {

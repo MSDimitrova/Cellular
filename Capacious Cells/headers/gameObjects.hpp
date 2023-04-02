@@ -92,12 +92,16 @@ struct Equipment : GameObject
 
         if (slot % 2)
         {
+            if (name == "toxin")
+                tempV2.y -= directionPos[slot * 2].y * Pixels(5);
             tempRotation *= -1;
             tempRotation -= round(atan2(tempV2.y, tempV2.x));
             tempV2.x = 0;
         }
         else
         {
+            if (name == "toxin")
+                tempV2.x -= directionPos[slot * 2].x * Pixels(5);
             tempRotation -= round(atan2(tempV2.x, tempV2.y));
             tempV2.y = 0;
         }
@@ -139,7 +143,7 @@ struct Cell : GameObject
     int knockbackFrames = 0;
     float knockbackAngle = 0;
 
-    Equipment equipment[4];
+    Equipment equipment[slots];
 
     void Setup(Prefab& prefab, int _id = -1)
     {
@@ -161,7 +165,7 @@ struct Cell : GameObject
     {
         knockbackFrames = _knockbackFrames;
         knockbackAngle = _knockbackAngle;
-        speed = Pixels(2);
+        speed = Pixels(3);
     }
     bool ApplyKnockback()
     {
@@ -171,7 +175,7 @@ struct Cell : GameObject
             knockbackFrames--;
             if (knockbackFrames == 0)
                 speed = Pixels(1);
-            else if(ceil(Pixels(speed, 1)) != ceil(knockbackFrames / 4))
+            else if(ceil(Pixels(speed, 1)) != ceil(knockbackFrames / 3))
                 speed--;
             return 1;
         }
@@ -195,14 +199,14 @@ struct Cell : GameObject
         if (damage > 0 && !pause)
         {
             hp -= damage;
-            invincibilityFrames = 20;
+            invincibilityFrames = 19;
             damage = 0;
         }
     }
 
     int CalculateSpeed()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < slots; i++)
             if (((AddIndex(movementIndex, -rotationIndex) == AddIndex(i * 2, 4)) || (AddIndex(movementIndex, -rotationIndex) == AddIndex(i * 2, 5)))
                && ((equipment[i].name == "bristles") || (equipment[i].name == "tail" && activeTail)))
                 return speed + Pixels(equipment[i].boost);
@@ -231,8 +235,8 @@ struct Food : GameObject
 Prefab cannonBallPrefab;
 std::vector<CannonBall> cannonBalls;
 
-Prefab spike, cannon, bristles, tail;
-Prefab* prefabPart[] = { &spike, &cannon, &bristles, &tail, }; //0 - spike, 1 - cannon, 2 - bristles, 3 - tail
+Prefab spike, cannon, bristles, tail, toxin;
+Prefab* prefabPart[parts] = { &spike, &cannon, &bristles, &tail, &toxin}; //0 - spike, 1 - cannon, 2 - bristles, 3 - tail, 4 - toxin
 Equipment defaultEquipment;
 
 Prefab prefabEnemy[prefabEnemies];

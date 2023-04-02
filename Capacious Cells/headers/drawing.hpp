@@ -18,7 +18,7 @@ void DrawGameObject(GameObject& gameObject)
 }
 void DrawCell(Cell& cell)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < slots; i++)
         if (cell.equipment[i].name != "none")
         {
             cell.equipment[i].UpdatePos(cell);
