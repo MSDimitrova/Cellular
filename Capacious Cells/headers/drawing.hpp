@@ -68,7 +68,7 @@ void DrawFrame()
     DrawFPS(10, 10);
     BeginMode2D(camera);
     
-    //DrawTexture(background, CENTER.x, CENTER.y, WHITE);
+    DrawTexture(background, CENTER.x - background.width / 2, CENTER.y - background.height / 2, WHITE);
     DrawCircle(CENTER.x, CENTER.y, 5, RED);
 
     for (int i = 0; i < enemyOnScreen.size(); i++)

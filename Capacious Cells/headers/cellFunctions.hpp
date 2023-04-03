@@ -54,7 +54,7 @@ void MoveEnemy(Cell& enemy)
     {
         enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
         enemy.MapRotation();
-        if (enemy.hp > 149 && EnemyClose(enemy.pos))
+        if (EnemyClose(enemy.pos))
             enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
     }
     else if (enemy.name == "enemy4")

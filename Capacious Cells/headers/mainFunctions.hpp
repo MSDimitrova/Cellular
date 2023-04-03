@@ -37,8 +37,8 @@ void LoadTextures()
     evolutionCardSprite = LoadTexture(Path(assetsFolder, "UI/EvolutionCard", pngExtention).string().c_str());
     cardButtonSprite = LoadTexture(Path(assetsFolder, "UI/CardButton", pngExtention).string().c_str());
 
-    //backgrounds
-    //background = LoadTexture(Path(assetsFolder, "screens/Background", pngExtention).string().c_str());
+    //screens
+    background = LoadTexture("../../assets/Background.png");
     deathScreen = LoadTexture(Path(assetsFolder, "screens/DeathScreen", pngExtention).string().c_str());
     darkenedScreen = LoadTexture(Path(assetsFolder, "screens/DarkenedScreen", pngExtention).string().c_str());
     mainMenu = LoadTexture(Path(assetsFolder, "screens/MainMenu", pngExtention).string().c_str());
@@ -49,7 +49,6 @@ void LoadTextures()
 
     //debug
     missingTexture = LoadTexture("../../assets/MissingTexture.png");
-    playerSprite[2] = LoadTexture("../../assets/720p/cells/PlayerCell.png");
 }
 void SetupObjects()
 {
