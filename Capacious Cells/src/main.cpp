@@ -59,6 +59,9 @@ int main()
             case 1: //evolve screen
             {
                 EndMode2D();
+
+                DrawUI();
+
                 EndDrawing();
 
                 Evolve();

@@ -33,6 +33,10 @@ void LoadTextures()
     playerSprite[0] = LoadTexture(Path(assetsFolder, "cells/PlayerCell", pngExtention).string().c_str());
     playerSprite[1] = LoadTexture(Path(assetsFolder, "cells/HungryPlayerCell", pngExtention).string().c_str());
 
+    //UI
+    evolutionCardSprite = LoadTexture(Path(assetsFolder, "UI/EvolutionCard", pngExtention).string().c_str());
+    cardButtonSprite = LoadTexture(Path(assetsFolder, "UI/CardButton", pngExtention).string().c_str());
+
     //backgrounds
     //background = LoadTexture(Path(assetsFolder, "screens/Background", pngExtention).string().c_str());
     deathScreen = LoadTexture(Path(assetsFolder, "screens/DeathScreen", pngExtention).string().c_str());
@@ -269,8 +273,59 @@ void VariableResets()
 }
 
 //evolve screen
+void DrawUI()
+{
+    Vector2 evolutionCardPosition{ GetScreenWidth() / 2 - evolutionCardSprite.width / 2, 800 };
+    Vector2 cardButtonPosition{ GetScreenWidth() / 2 - cardButtonSprite.width / 2, 1000 };
+
+    DrawTexture(evolutionCardSprite, evolutionCardPosition.x - Pixels(50), evolutionCardPosition.y, WHITE);
+    DrawTexture(evolutionCardSprite, evolutionCardPosition.x - Pixels(25), evolutionCardPosition.y, WHITE);
+    DrawTexture(evolutionCardSprite, evolutionCardPosition.x, evolutionCardPosition.y, WHITE);
+    DrawTexture(evolutionCardSprite, evolutionCardPosition.x + Pixels(25), evolutionCardPosition.y, WHITE);
+    DrawTexture(evolutionCardSprite, evolutionCardPosition.x + Pixels(50), evolutionCardPosition.y, WHITE);
+
+    DrawTexture(cardButtonSprite, cardButtonPosition.x - Pixels(50), cardButtonPosition.y, WHITE);
+    DrawTexture(cardButtonSprite, cardButtonPosition.x - Pixels(25), cardButtonPosition.y, WHITE);
+    DrawTexture(cardButtonSprite, cardButtonPosition.x, cardButtonPosition.y, WHITE);
+    DrawTexture(cardButtonSprite, cardButtonPosition.x + Pixels(25), cardButtonPosition.y, WHITE);
+    DrawTexture(cardButtonSprite, cardButtonPosition.x + Pixels(50), cardButtonPosition.y, WHITE);
+
+    DrawTexturePro(spike.sprite[0], spikeSource, spikeDest, spikeOrigin, -90, WHITE);
+    DrawTexturePro(cannon.sprite[0], cannonSource, cannonDest, cannonOrigin, -90, WHITE);
+    DrawTexturePro(tail.sprite[0], tailSource, tailDest, tailOrigin, -90, WHITE);
+    DrawTexturePro(bristles.sprite[0], bristlesSource, bristlesDest, bristlesOrigin, -90, WHITE);
+    DrawTexturePro(toxin.sprite[0], toxinSource, toxinDest, toxinOrigin, -90, WHITE);
+}
 void Evolve()
 {
+    Vector2 evolutionCardPosition{ GetScreenWidth() / 2 - evolutionCardSprite.width / 2, 800 };
+    Vector2 cardButtonPosition{ GetScreenWidth() / 2 - cardButtonSprite.width / 2, 1000 };
+
+    spikePosition = { evolutionCardPosition.x - Pixels(50) + evolutionCardSprite.width / 2, evolutionCardPosition.y + evolutionCardSprite.height / 2 };
+    spikeDest = { spikePosition.x, spikePosition.y, (float)spike.sprite[0].width, (float)spike.sprite[0].height };
+    spikeSource = { 0, 0, (float)spike.sprite[0].width, (float)spike.sprite[0].height };
+    spikeOrigin = { (float)spike.sprite[0].width / 2, (float)spike.sprite[0].height / 2 };
+
+    cannonPosition = { evolutionCardPosition.x - Pixels(25) + evolutionCardSprite.width / 2, evolutionCardPosition.y + evolutionCardSprite.height / 2 };
+    cannonDest = { cannonPosition.x, cannonPosition.y, (float)cannon.sprite[0].width, (float)cannon.sprite[0].height };
+    cannonSource = { 0, 0, (float)cannon.sprite[0].width, (float)cannon.sprite[0].height };
+    cannonOrigin = { (float)cannon.sprite[0].width / 2, (float)cannon.sprite[0].height / 2 };
+
+    bristlesPosition = { evolutionCardPosition.x + evolutionCardSprite.width / 2, evolutionCardPosition.y + evolutionCardSprite.height / 2 };
+    bristlesDest = { bristlesPosition.x, bristlesPosition.y, (float)bristles.sprite[0].width, (float)bristles.sprite[0].height };
+    bristlesSource = { 0, 0, (float)bristles.sprite[0].width, (float)bristles.sprite[0].height };
+    bristlesOrigin = { (float)bristles.sprite[0].width / 2, (float)bristles.sprite[0].height / 2 };
+
+    tailPosition = { evolutionCardPosition.x + Pixels(25) + evolutionCardSprite.width / 2, evolutionCardPosition.y + evolutionCardSprite.height / 2 };
+    tailDest = { tailPosition.x, tailPosition.y, (float)tail.sprite[0].width, (float)tail.sprite[0].height };
+    tailSource = { 0, 0, (float)tail.sprite[0].width, (float)tail.sprite[0].height };
+    tailOrigin = { (float)tail.sprite[0].width / 2, (float)tail.sprite[0].height / 2 };
+
+    toxinPosition = { evolutionCardPosition.x + Pixels(50) + evolutionCardSprite.width / 2, evolutionCardPosition.y + evolutionCardSprite.height / 2 };
+    toxinDest = { toxinPosition.x, toxinPosition.y, (float)toxin.sprite[0].width, (float)toxin.sprite[0].height };
+    toxinSource = { 0, 0, (float)toxin.sprite[0].width, (float)toxin.sprite[0].height };
+    toxinOrigin = { (float)toxin.sprite[0].width / 2, (float)toxin.sprite[0].height / 2 };
+
     if (targetEquipment == -1)
     {
         if (IsKeyPressed(KEY_ONE))
