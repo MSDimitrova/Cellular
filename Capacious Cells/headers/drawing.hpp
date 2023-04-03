@@ -1,6 +1,33 @@
 #pragma once
 #include "libraries.hpp"
 
+void DrawControls()
+{
+    tempV2 = GetScreenToWorld2D({Pixels(2), Pixels(2)}, camera);
+    switch (screen)
+    {
+    case 0:
+        DrawText("Controls:\nWASD: Move\nSHIFT: Activate tail\nQ: Open membrane\nESC: Pause\nE: Evolve\nEND: Return to desktop", tempV2.x, tempV2.y, Pixels(5), WHITE);
+        break;
+
+    case 1:
+        DrawText("Controls:\nESC: Pause\nE: Exit evolution\nEND: Return to desktop", tempV2.x, tempV2.y, Pixels(5), WHITE);
+        break;
+
+    case 2:
+        DrawText("Controls:\nENTER: Start new game\nEND: Return to desktop", tempV2.x, tempV2.y, Pixels(5), WHITE);
+        break;
+        
+    case 3:
+        DrawText("Controls:\nESC: Continue\nEND: Return to desktop", tempV2.x, tempV2.y, Pixels(5), WHITE);
+        break;
+
+    case 4:
+        DrawText("Controls:\nENTER: Start new game\nESC: Return to main menu\nEND: Return to desktop", tempV2.x, tempV2.y, Pixels(5), WHITE);
+        break;
+    }
+}
+
 void DrawGameObject(GameObject& gameObject, bool exeption = 0)
 {
     if (!pause && gameObject.sprite.size() > 1 && !exeption)
@@ -40,7 +67,7 @@ void DrawFrame()
     ClearBackground(BLACK);
     DrawFPS(10, 10);
     BeginMode2D(camera);
-
+    
     //DrawTexture(background, CENTER.x, CENTER.y, WHITE);
     DrawCircle(CENTER.x, CENTER.y, 5, RED);
 
@@ -51,4 +78,5 @@ void DrawFrame()
     for (int i = 0; i < foodOnScreen.size(); i++)
         DrawGameObject(*foodOnScreen[i]);
     DrawCell(player);
+    DrawControls();
 }
