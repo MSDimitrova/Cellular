@@ -1,0 +1,6 @@
+{
+	"speed": 2,
+	"maxHp": 200,
+	"equipment": ["cannon", "cannon", "bristles", "cannon"],
+	"name": "enemy4"
+}

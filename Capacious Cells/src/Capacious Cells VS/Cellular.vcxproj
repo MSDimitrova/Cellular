@@ -147,6 +147,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\prefabs\cells\enemy0.json" />
+    <None Include="..\..\prefabs\cells\enemy1.json" />
+    <None Include="..\..\prefabs\cells\enemy2.json" />
+    <None Include="..\..\prefabs\cells\enemy3.json" />
+    <None Include="..\..\prefabs\cells\enemy4.json" />
     <None Include="..\..\prefabs\equipment\bristles.json" />
     <None Include="..\..\prefabs\equipment\cannon.json" />
     <None Include="..\..\prefabs\equipment\spike.json" />

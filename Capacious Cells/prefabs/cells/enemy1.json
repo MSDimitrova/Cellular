@@ -1,0 +1,6 @@
+{
+	"speed": 2,
+	"maxHp": 170,
+	"equipment": ["spike", "spike", "bristles", "tail"],
+	"name": "enemy1"
+}

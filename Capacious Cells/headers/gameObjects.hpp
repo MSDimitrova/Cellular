@@ -167,8 +167,8 @@ struct Cell : GameObject
 
         //assign prefab values to enemy's values
         name = prefab.data["name"];
+        //speed = ceil(Pixels(prefab.data["speed"]) / 2);
         speed = Pixels(prefab.data["speed"]);
-        id = prefab.data["id"];
         maxHp = prefab.data["maxHp"];
         hp = maxHp;
 

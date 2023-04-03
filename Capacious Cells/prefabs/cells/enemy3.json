@@ -1,0 +1,6 @@
+{
+	"speed": 1,
+	"maxHp": 200,
+	"equipment": ["spike", "toxin", "none", "toxin"],
+	"name": "enemy3"
+}

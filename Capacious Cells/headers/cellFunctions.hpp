@@ -31,16 +31,35 @@ void MoveInTwoDirections(Cell& cell, Vector2 direction, int index, bool& refChec
 }
 void MoveEnemy(Cell& enemy)
 {
-    if (enemy.name == "enemy0")
+    if (enemy.name == "enemy0" || enemy.name == "enemy1")
     {
         enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
         enemy.MapRotation();
+
         if (enemy.hp > 99)
             enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
-        else
-            enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, AddRotation(enemy.rotation, 90) / toDegrees);
+        else if (enemy.name == "enemy0")
+            enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed + Pixels(enemy.equipment[3].boost), AddRotation(enemy.rotation, 90) / toDegrees);
+        else if (enemy.name == "enemy1")
+            enemy.pos = HypotenuseCoordinates(enemy.pos, Pixels(enemy.equipment[3].boost), AddRotation(enemy.rotation, 90) / toDegrees);
     }
+    else if (enemy.name == "enemy2" || enemy.name == "enemy3")
+    {
+        enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
+        enemy.MapRotation();
 
+        enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
+    }
+    else if (enemy.name == "enemy4")
+    {
+        if (enemy.hp > 199)
+        {
+            enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
+            enemy.MapRotation();
+        }
+
+        enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
+    }
 }
 
 void TryShootingCannonball(Cell& cell, int cannonSlot)

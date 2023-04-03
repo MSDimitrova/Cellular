@@ -64,5 +64,17 @@
     <None Include="..\..\prefabs\equipment\toxin.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\prefabs\cells\enemy1.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\prefabs\cells\enemy2.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\prefabs\cells\enemy3.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\prefabs\cells\enemy4.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
