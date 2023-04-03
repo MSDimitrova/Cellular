@@ -1,15 +1,15 @@
 #pragma once
 #include "libraries.hpp"
 
-void Equip(Cell& cell, int _part, int _slot)
+//movement
+int CalculateSpeed()
 {
-    if (cell.equipment[_slot].name == "tail" && cell.id == -1)
-        playerHadTail = 1;
-    cell.equipment[_slot] = defaultEquipment; //clean equipment
-    cell.equipment[_slot].Setup(*prefabPart[_part]);
-    cell.equipment[_slot].slot = _slot;
+    for (int i = 0; i < slots; i++)
+        if (((AddIndex(player.movementIndex, -player.rotationIndex) == AddIndex(i * 2, 4)) || (AddIndex(player.movementIndex, -player.rotationIndex) == AddIndex(i * 2, 5)))
+            && ((player.equipment[i].name == "bristles") || (player.equipment[i].name == "tail" && player.activeTail)))
+            return player.speed + Pixels(player.equipment[i].boost);
+    return player.speed;
 }
-
 void MoveInOneDirection(KeyboardKey targetKey, KeyboardKey avoidKey, int index)
 {
     if (IsKeyDown(targetKey))
@@ -17,9 +17,8 @@ void MoveInOneDirection(KeyboardKey targetKey, KeyboardKey avoidKey, int index)
         if (!IsKeyDown(avoidKey))
             player.movementIndex = index;
 
-        tempInt = player.CalculateSpeed();
-        player.pos.x += tempInt * directionPos[index].x;
-        player.pos.y += tempInt * directionPos[index].y;
+        player.pos.x += CalculateSpeed() * directionPos[index].x;
+        player.pos.y += CalculateSpeed() * directionPos[index].y;
     }
 }
 void MoveInTwoDirections(Cell& cell, Vector2 direction, int index, bool& refCheck = dummyBool)
@@ -27,9 +26,21 @@ void MoveInTwoDirections(Cell& cell, Vector2 direction, int index, bool& refChec
     refCheck = 1;
     cell.movementIndex = index;
 
-    tempInt = player.CalculateSpeed();
-    cell.pos.x += round(sqrt(pow(tempInt, 2) / 2)) * direction.x;
-    cell.pos.y += round(sqrt(pow(tempInt, 2) / 2)) * direction.y;
+    cell.pos.x += round(sqrt(pow(CalculateSpeed(), 2) / 2)) * direction.x;
+    cell.pos.y += round(sqrt(pow(CalculateSpeed(), 2) / 2)) * direction.y;
+}
+void MoveEnemy(Cell& enemy)
+{
+    if (enemy.name == "enemy0")
+    {
+        enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
+        enemy.MapRotation();
+        if (enemy.hp > 99)
+            enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
+        else
+            enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, AddRotation(enemy.rotation, 90) / toDegrees);
+    }
+
 }
 
 void TryShootingCannonball(Cell& cell, int cannonSlot)

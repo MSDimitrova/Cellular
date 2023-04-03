@@ -171,6 +171,8 @@ void EnemyActions()
         enemyOnScreen[i]->ApplyInvincibility();
         enemyOnScreen[i]->ApplyKnockback();
         enemyOnScreen[i]->ApplyDamage();
+
+        MoveEnemy(*enemyOnScreen[i]);
     }
 }
 void PlayerActions()
@@ -178,13 +180,7 @@ void PlayerActions()
     //rotate
     player.rotation = atan2(GetScreenToWorld2D(GetMousePosition(), camera).y - player.pos.y,
         GetScreenToWorld2D(GetMousePosition(), camera).x - player.pos.x) * toDegrees;
-    if (player.rotation < 0)
-        player.rotation += 360;
-
-    //map rotation
-    player.rotationIndex = floor(player.rotation / 45);
-    if (player.rotationIndex < 0)
-        player.rotationIndex += 8;
+    player.MapRotation();
 
     //equipment
     for (int i = 0; i < 4; i++)
@@ -300,7 +296,7 @@ void Evolve()
     }
     else
     {
-        Equip(player, targetEquipment, targetSlot);
+        player.Equip(targetEquipment, targetSlot);
         targetEquipment = -1;
         targetSlot = -1;
     }
@@ -324,10 +320,10 @@ void SetupVariables()
         enemy[i].Setup(prefabEnemy[0], i);
         enemy[i].currentSprite = enemy[i].sprite[0];
     }
-    enemy[0].pos = { CENTER.x + Pixels(60), CENTER.y };
-    enemy[1].pos = { CENTER.x, CENTER.y + Pixels(60) };
-    enemy[2].pos = { CENTER.x - Pixels(60), CENTER.y };
-    enemy[3].pos = { CENTER.x, CENTER.y - Pixels(60) };
+    enemy[0].pos = { CENTER.x + Pixels(120), CENTER.y };
+    enemy[1].pos = { CENTER.x, CENTER.y + Pixels(120) };
+    enemy[2].pos = { CENTER.x - Pixels(120), CENTER.y };
+    enemy[3].pos = { CENTER.x, CENTER.y - Pixels(120) };
 
     //setup food
     for (int i = 0; i < foods; i++)
@@ -359,7 +355,8 @@ void SetupVariables()
 
     //debug
     for (int i = 0; i < slots; i++)
-        Equip(player, 0, i);
+        player.Equip(1, i);
+    player.Equip(2, 2);
 
     /*for (int i = 0; i < enemies; i++)
         for (int j = 0; j < slots; j++)

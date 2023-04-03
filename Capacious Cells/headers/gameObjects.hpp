@@ -131,7 +131,7 @@ struct Equipment : GameObject
 
         UpdateAnimation(prefab);
     }
-};
+} defaultEquipment;
 
 struct Cell : GameObject
 {
@@ -141,14 +141,24 @@ struct Cell : GameObject
     int invincibilityFrames = 0;
     int activeTailFrames = 0, cooldownTailFrames = 0;
     int movementIndex = -1, rotationIndex = -1;
+    std::string name = "";
 
     int knockbackFrames = 0;
     float knockbackAngle = 0;
 
     int maxHp = initialPlayerHp, hp = maxHp, damage = 0;
-    std::string hpText;
+    std::string hpText = "";
 
     Equipment equipment[slots];
+
+    void Equip(int _part, int _slot)
+    {
+        if (equipment[_slot].name == "tail" && id == -1)
+            playerHadTail = 1;
+        equipment[_slot] = defaultEquipment; //clean equipment
+        equipment[_slot].Setup(*prefabPart[_part]);
+        equipment[_slot].slot = _slot;
+    }
 
     void Setup(Prefab& prefab, int _id = -1)
     {
@@ -156,7 +166,8 @@ struct Cell : GameObject
             id = _id;
 
         //assign prefab values to enemy's values
-        speed = prefab.data["speed"];
+        name = prefab.data["name"];
+        speed = Pixels(prefab.data["speed"]);
         id = prefab.data["id"];
         maxHp = prefab.data["maxHp"];
         hp = maxHp;
@@ -166,12 +177,9 @@ struct Cell : GameObject
             if (prefab.data["equipment"][i] != "none")
                 for (int j = 0; j < parts; j++)
                     if (prefab.data["equipment"][i] == prefabPart[j]->name)
-                    {
-                        equipment[i].Setup(*prefabPart[j]);
-                        equipment[i].slot = i;
-                    }
+                        Equip(j, i);
     }
-
+    
     void ApplyInvincibility()
     {
         if (invincibilityFrames > 0 && !pause)
@@ -222,15 +230,6 @@ struct Cell : GameObject
         }
     }
 
-    int CalculateSpeed()
-    {
-        for (int i = 0; i < slots; i++)
-            if (((AddIndex(movementIndex, -rotationIndex) == AddIndex(i * 2, 4)) || (AddIndex(movementIndex, -rotationIndex) == AddIndex(i * 2, 5)))
-               && ((equipment[i].name == "bristles") || (equipment[i].name == "tail" && activeTail)))
-                return speed + Pixels(equipment[i].boost);
-        return speed;
-    }
-
     void DrawHp(bool update = 1)
     {
         hpText = "";
@@ -252,6 +251,15 @@ struct Cell : GameObject
             tempColor = RED;
         }
         DrawText(hpText.c_str(), pos.x - Pixels(hpText.size()), pos.y - Pixels(20), Pixels(5), tempColor);
+    }
+
+    void MapRotation()
+    {
+        if (rotation < 0)
+            rotation += 360;
+        rotationIndex = floor(rotation / 45);
+        if (rotationIndex < 0)
+            rotationIndex += 8;
     }
 };
 
@@ -286,8 +294,6 @@ struct Food : GameObject
 std::vector<CannonBall> cannonBalls;
 std::vector<Food> food(foods);
 std::vector<Food*> foodOnScreen;
-
-Equipment defaultEquipment;
 
 Prefab prefabEnemy[prefabEnemies];
 std::vector<Cell> enemy(enemies);
