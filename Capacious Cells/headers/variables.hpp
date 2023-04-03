@@ -39,7 +39,7 @@ Vector2 CENTER, windowSize = {1280, 720}, cellMargin[slots];
 //sprites
 Texture2D whiteCellSprite, enemyCellSprite, playerSprite[3];
 Texture2D evolutionCardSprite, cardButtonSprite;
-Texture2D background, deathScreen, darkenedScreen;
+Texture2D background, deathScreen, darkenedScreen, mainMenu;
 Texture2D cannonBallSprite, foodSprite;
 Texture2D missingTexture;
 

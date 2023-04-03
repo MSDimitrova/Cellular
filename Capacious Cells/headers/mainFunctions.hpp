@@ -41,6 +41,7 @@ void LoadTextures()
     //background = LoadTexture(Path(assetsFolder, "screens/Background", pngExtention).string().c_str());
     deathScreen = LoadTexture(Path(assetsFolder, "screens/DeathScreen", pngExtention).string().c_str());
     darkenedScreen = LoadTexture(Path(assetsFolder, "screens/DarkenedScreen", pngExtention).string().c_str());
+    mainMenu = LoadTexture(Path(assetsFolder, "screens/MainMenu", pngExtention).string().c_str());
 
     //balls
     cannonBallSprite = LoadTexture(Path(assetsFolder, "balls/CannonBall", pngExtention).string().c_str());
@@ -260,6 +261,14 @@ void PlayerActions()
     }
     else if (player.cooldownTailFrames > 0)
         player.cooldownTailFrames--;
+}
+void DeathCkeck()
+{
+    if (player.hp < 1)
+    {
+        player.hp = initialPlayerHp;
+        screen = 4;
+    }
 }
 
 void VariableResets()

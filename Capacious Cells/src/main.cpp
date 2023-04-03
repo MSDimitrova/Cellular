@@ -35,24 +35,7 @@ int main()
                 VariableResets();
                 ScreenListens();
                 
-
-                //debug
-                if (IsKeyPressed(KEY_ONE))
-                    player.UpdateSprite(&playerSprite[0]);
-                else if (IsKeyPressed(KEY_TWO))
-                    player.UpdateSprite(&playerSprite[2]);
-                else if (IsKeyPressed(KEY_THREE))
-                    std::cout << player.hpText << std::endl;
-
-                tempPos = GetWorldToScreen2D(player.pos, camera);
-                tempV2 = HypotenuseCoordinates(tempPos, Pixels(25), player.rotation / toDegrees);
-                DrawLine(tempPos.x, tempPos.y, tempV2.x, tempV2.y, YELLOW);
-
-                if (player.hp < 1)
-                {
-                    player.hp = initialPlayerHp;
-                    screen = 4;
-                }
+                DeathCkeck();
             }
             break;
 
@@ -72,6 +55,8 @@ int main()
 
             case 2: //main menu
             {
+                DrawTexture(mainMenu, GetScreenToWorld2D({ 0,0 }, camera).x, GetScreenToWorld2D({ 0,0 }, camera).y, WHITE);
+
                 EndMode2D();
                 EndDrawing();
 
