@@ -1,9 +1,9 @@
 #pragma once
 #include "libraries.hpp"
 
-void DrawGameObject(GameObject& gameObject, bool cell = 0)
+void DrawGameObject(GameObject& gameObject, bool exeption = 0)
 {
-    if (!pause && gameObject.sprite.size() > 1 && !cell)
+    if (!pause && gameObject.sprite.size() > 1 && !exeption)
         gameObject.Animate();
 
     DrawTexturePro(*gameObject.currentSprite, Rectangle{ 0, 0, gameObject.size.x, gameObject.size.y },
@@ -17,7 +17,10 @@ void DrawCell(Cell& cell)
         if (cell.equipment[i].name != "none")
         {
             cell.equipment[i].UpdatePos(cell);
-            DrawGameObject(cell.equipment[i]);
+            if (cell.equipment[i].name == "toxin")
+                DrawGameObject(cell.equipment[i], 1);
+            else
+                DrawGameObject(cell.equipment[i]);
         }
 
     //draw cell

@@ -27,7 +27,7 @@ const char* assetsFolder = "../../assets/";
 const char* prefabsFolder = "../../prefabs/";
 
 //constants
-const int foods = 4, enemies = 5, prefabEnemies = 5, initialPlayerHp = 150, parts = 5, slots = 4;
+const int foods = 4, enemies = 50, prefabEnemies = 5, initialPlayerHp = 150, parts = 5, slots = 4;
 const float directionRotation[8] = { 0, 45, 90, 135, 180, 225, 270, 315 };
 const float toDegrees = 57.29578f;
 const Vector2 directionPos[8] = { {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };

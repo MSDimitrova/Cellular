@@ -7,6 +7,7 @@
 #include <cmath>
 #include <string>
 #include <filesystem>
+#include <random>
 
 //static external
 #include "../include/json.hpp"

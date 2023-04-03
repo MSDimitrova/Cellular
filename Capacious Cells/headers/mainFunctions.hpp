@@ -50,6 +50,7 @@ void SetupObjects()
 {
     //setup prefabs
         //parts
+    toxin.sprite.push_back(LoadTexture(Path(assetsFolder, "equipment/toxin(card)", pngExtention).string().c_str()));
     for (int i = 0; i < prefabPartName.size(); i++)
         prefabPart[i]->Setup(prefabPartName[i]);
 
@@ -317,14 +318,12 @@ void SetupVariables()
     //setup enemies
     for (int i = 0; i < enemies; i++)
     {
-        enemy[i].Setup(prefabEnemy[i], i);
+        enemy[i].Setup(prefabEnemy[int(floor(i/10))], i);
         enemy[i].currentSprite = enemy[i].sprite[0];
     }
-    enemy[0].pos = { CENTER.x + Pixels(45), CENTER.y };
-    enemy[1].pos = { CENTER.x, CENTER.y + Pixels(60) };
-    enemy[2].pos = { CENTER.x - Pixels(60), CENTER.y };
-    enemy[3].pos = { CENTER.x, CENTER.y - Pixels(60) };
-    enemy[4].pos = { CENTER.x + Pixels(90), CENTER.y };
+
+    for (int i = 0; i < enemies; i++)
+        enemy[i].pos = { CENTER.x + Pixels(randomCoordinate()), CENTER.y + Pixels(randomCoordinate()) };
 
     //setup food
     for (int i = 0; i < foods; i++)
@@ -355,9 +354,9 @@ void SetupVariables()
     enemyOnScreen.clear();
 
     //debug
-    /*for (int i = 0; i < slots; i++)
-        player.Equip(1, i);*/
-    player.Equip(1, 0);
+    for (int i = 0; i < slots; i++)
+        player.Equip(4, i);
+    //player.Equip(1, 0);
 }
 void ScreenListens()
 {

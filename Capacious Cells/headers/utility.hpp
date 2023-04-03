@@ -63,3 +63,11 @@ fs::path Path(const char* folder, const char* name, const char* extention, int i
         path += extention[i];
     return path;
 }
+
+int randomCoordinate()
+{
+    static std::default_random_engine rng;
+
+    std::uniform_real_distribution<double> dist(-500.0, 500.0);
+    return floor(dist(rng));
+}
