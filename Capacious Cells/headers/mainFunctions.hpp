@@ -80,9 +80,7 @@ void Sorting()
 {
     //setup screen checks
     screenCheck[0] = GetScreenToWorld2D({ windowSize.x + Pixels(20), windowSize.y + Pixels(20) }, camera);
-    screenCheck[1] = GetScreenToWorld2D({ Pixels(-20), windowSize.y + Pixels(20) }, camera);
-    screenCheck[2] = GetScreenToWorld2D({ Pixels(-20), Pixels(-20) }, camera);
-    screenCheck[3] = GetScreenToWorld2D({ windowSize.x + Pixels(20), Pixels(-20) }, camera);
+    screenCheck[1] = GetScreenToWorld2D({ Pixels(-20), Pixels(-20) }, camera);
 
     //sort enemies
     enemyOnScreen.clear();
@@ -373,20 +371,17 @@ void SetupVariables()
     //setup enemies
     for (int i = 0; i < enemies; i++)
     {
-        enemy[i].Setup(prefabEnemy[int(floor(i/10))], i);
+        enemy[i].Setup(prefabEnemy[int(floor(i / (enemies / 5)))], i);
         enemy[i].currentSprite = enemy[i].sprite[0];
-    }
-
-    for (int i = 0; i < enemies; i++)
         enemy[i].pos = { CENTER.x + Pixels(randomCoordinate()), CENTER.y + Pixels(randomCoordinate()) };
+    }        
 
     //setup food
     for (int i = 0; i < foods; i++)
+    {
         food[i].eaten = 0;
-    food[0].pos = { CENTER.x + Pixels(30), CENTER.y + Pixels(30) };
-    food[1].pos = { CENTER.x + Pixels(30), CENTER.y - Pixels(30) };
-    food[2].pos = { CENTER.x - Pixels(30), CENTER.y + Pixels(30) };
-    food[3].pos = { CENTER.x - Pixels(30), CENTER.y - Pixels(30) };
+        food[i].pos = { CENTER.x + Pixels(randomCoordinate()), CENTER.y + Pixels(randomCoordinate()) };
+    }
 
     //setup player
     player.pos = CENTER;
@@ -401,6 +396,9 @@ void SetupVariables()
     player.UpdateSprite(&whiteCellSprite, 2);
     player.currentSprite = player.sprite[0];
 
+    for (int i = 0; i < slots; i++)
+        player.equipment[i] = defaultEquipment;
+
     //setup misc.
     camera = { CENTER, player.pos, 0, 1.0f };
 
@@ -409,8 +407,6 @@ void SetupVariables()
     enemyOnScreen.clear();
 
     //debug
-    for (int i = 0; i < slots; i++)
-        player.Equip(4, i);
     //player.Equip(1, 0);
 }
 void ScreenListens()

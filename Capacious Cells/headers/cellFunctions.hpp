@@ -1,6 +1,13 @@
 #pragma once
 #include "libraries.hpp"
 
+bool EnemyClose(Vector2 enemyPos)
+{
+    if (abs(enemyPos.x) - abs(player.pos.x) < Pixels(75) && abs(enemyPos.y) - abs(player.pos.y) < Pixels(75))
+        return 1;
+    return 0;
+}
+
 //movement
 int CalculateSpeed()
 {
@@ -36,19 +43,19 @@ void MoveEnemy(Cell& enemy)
         enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
         enemy.MapRotation();
 
-        if (enemy.hp > 99)
+        if (enemy.hp > 99 && EnemyClose(enemy.pos))
             enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
-        else if (enemy.name == "enemy0")
+        else if (enemy.name == "enemy0" && enemy.hp < 100)
             enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed + Pixels(enemy.equipment[3].boost), AddRotation(enemy.rotation, 90) / toDegrees);
-        else if (enemy.name == "enemy1")
+        else if (enemy.name == "enemy1" && enemy.hp < 100)
             enemy.pos = HypotenuseCoordinates(enemy.pos, Pixels(enemy.equipment[3].boost), AddRotation(enemy.rotation, 90) / toDegrees);
     }
     else if (enemy.name == "enemy2" || enemy.name == "enemy3")
     {
         enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
         enemy.MapRotation();
-
-        enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
+        if (enemy.hp > 149 && EnemyClose(enemy.pos))
+            enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
     }
     else if (enemy.name == "enemy4")
     {
@@ -57,6 +64,8 @@ void MoveEnemy(Cell& enemy)
             enemy.rotation = atan2(player.pos.y - enemy.pos.y, player.pos.x - enemy.pos.x) * toDegrees;
             enemy.MapRotation();
         }
+        else
+            enemy.speed = Pixels(1);
 
         enemy.pos = HypotenuseCoordinates(enemy.pos, enemy.speed, enemy.rotation / toDegrees);
     }

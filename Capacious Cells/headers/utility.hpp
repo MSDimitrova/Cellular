@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 //screen related
 bool IsOnScreen(Vector2 pos)
 {
-    if (pos.x > screenCheck[2].x && pos.y > screenCheck[2].y && pos.x < screenCheck[0].x && pos.y < screenCheck[0].y)
+    if (pos.x > screenCheck[1].x && pos.y > screenCheck[1].y && pos.x < screenCheck[0].x && pos.y < screenCheck[0].y)
         return 1;
     return 0;
 }
@@ -68,6 +68,6 @@ int randomCoordinate()
 {
     static std::default_random_engine rng;
 
-    std::uniform_real_distribution<double> dist(-500.0, 500.0);
+    std::uniform_real_distribution<double> dist(-Pixels(19200, 1), Pixels(19200, 1));
     return floor(dist(rng));
 }
