@@ -18,6 +18,7 @@ void SetupWindow()
     SetWindowPosition(monitorSize.x / 2 - CENTER.x, monitorSize.y / 2 - CENTER.y);
     if ((monitorSize.x == 1280 && monitorSize.y == 720) || (monitorSize.x == 1920 && monitorSize.y == 1080))
         SetWindowState(FLAG_FULLSCREEN_MODE);
+    std::cout << monitorSize.x << " " << monitorSize.y << ", " << windowSize.x << " " << windowSize.y << std::endl;
 
     //misc.
     SetTargetFPS(60);

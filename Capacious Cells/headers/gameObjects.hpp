@@ -199,8 +199,8 @@ struct Cell : GameObject
             knockbackFrames--;
             if (knockbackFrames == 0)
                 speed = Pixels(1);
-            else if(ceil(Pixels(speed, 1)) != ceil(knockbackFrames / 3))
-                speed--;
+            else if(ceil(Pixels(speed, 1)) != ceil(knockbackFrames / 6))
+                speed -= floor(Pixels(.34));
             return 1;
         }
         return 0;

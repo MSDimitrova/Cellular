@@ -34,7 +34,7 @@ const Vector2 directionPos[8] = { {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, 
 
 //constant after first assignment
 bool resolution = 0;
-Vector2 CENTER, windowSize, cellMargin[slots];
+Vector2 CENTER, windowSize = {1280, 720}, cellMargin[slots];
 
 //sprites
 Texture2D whiteCellSprite, enemyCellSprite, playerSprite[3];
