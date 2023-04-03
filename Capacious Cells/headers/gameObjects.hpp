@@ -3,26 +3,29 @@
 
 struct Prefab
 {
+    std::string name = "none";
     std::vector<Texture2D> sprite;
     json data;
 
-    void Setup(const char* name)
+    void Setup(const char* _name)
     {
-        if (fs::exists(Path(assetsFolder, name, pngExtention)))
-            sprite.push_back(LoadTexture(Path(assetsFolder, name, pngExtention).string().c_str()));
+        if (fs::exists(Path(assetsFolder, _name, pngExtention)))
+            sprite.push_back(LoadTexture(Path(assetsFolder, _name, pngExtention).string().c_str()));
         else
             for (int i = 0; i < 63; i++)
-                if (fs::exists(Path(assetsFolder, name, pngExtention, i)))
-                    sprite.push_back(LoadTexture(Path(assetsFolder, name, pngExtention, i).string().c_str()));
+                if (fs::exists(Path(assetsFolder, _name, pngExtention, i)))
+                    sprite.push_back(LoadTexture(Path(assetsFolder, _name, pngExtention, i).string().c_str()));
                 else
                     break;
-        if (fs::exists(Path(prefabsFolder, name, jsonExtention)))
+        if (fs::exists(Path(prefabsFolder, _name, jsonExtention)))
         {
-            std::ifstream f(Path(prefabsFolder, name, jsonExtention));
+            std::ifstream f(Path(prefabsFolder, _name, jsonExtention));
             data = json::parse(f);
+            name = data["name"];
         }
     }
-};
+} spike, cannon, bristles, tail, toxin;
+Prefab* prefabPart[parts] = { &spike, &cannon, &bristles, &tail, &toxin }; //0 - spike, 1 - cannon, 2 - bristles, 3 - tail, 4 - toxin
 
 struct GameObject
 {
@@ -152,11 +155,21 @@ struct Cell : GameObject
         if (_id != -1)
             id = _id;
 
-        //assign prefab values to this's values
+        //assign prefab values to enemy's values
         speed = prefab.data["speed"];
         id = prefab.data["id"];
         maxHp = prefab.data["maxHp"];
         hp = maxHp;
+
+        //equip enemy with prefab equipment
+        for (int i = 0; i < slots; i++)
+            if (prefab.data["equipment"][i] != "none")
+                for (int j = 0; j < parts; j++)
+                    if (prefab.data["equipment"][i] == prefabPart[j]->name)
+                    {
+                        equipment[i].Setup(*prefabPart[j]);
+                        equipment[i].slot = i;
+                    }
     }
 
     void ApplyInvincibility()
@@ -274,8 +287,6 @@ std::vector<CannonBall> cannonBalls;
 std::vector<Food> food(foods);
 std::vector<Food*> foodOnScreen;
 
-Prefab spike, cannon, bristles, tail, toxin;
-Prefab* prefabPart[parts] = { &spike, &cannon, &bristles, &tail, &toxin}; //0 - spike, 1 - cannon, 2 - bristles, 3 - tail, 4 - toxin
 Equipment defaultEquipment;
 
 Prefab prefabEnemy[prefabEnemies];

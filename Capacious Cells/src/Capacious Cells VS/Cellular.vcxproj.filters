@@ -41,6 +41,9 @@
     <ClInclude Include="..\..\headers\drawing.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\headers\mainFunctions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\prefabs\equipment\bristles.json">

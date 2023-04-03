@@ -360,9 +360,9 @@ void SetupVariables()
     for (int i = 0; i < slots; i++)
         Equip(player, 0, i);
 
-    for (int i = 0; i < enemies; i++)
+    /*for (int i = 0; i < enemies; i++)
         for (int j = 0; j < slots; j++)
-            Equip(enemy[i], 0, j);
+            Equip(enemy[i], 0, j);*/
 }
 void ScreenListens()
 {
